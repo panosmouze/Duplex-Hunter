@@ -5,7 +5,6 @@
 
 FileEntry::FileEntry(const fs::path& path, bool fastHash) {
     this->path = path;
-    this->fastHash = fastHash;
     this->hash = hashFile(path, fastHash);
 }
 

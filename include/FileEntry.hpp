@@ -8,7 +8,6 @@ class FileEntry {
 private:
     uint64_t hash;
     fs::path path;
-    bool fastHash;
 
 public:
     FileEntry(const fs::path& path, bool fastHash = false);
