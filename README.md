@@ -13,3 +13,11 @@ duplexhunter [options]
 --enable-fast-hash      Use faster (partial) hashing
 --help                  Show help
 ```
+
+## Duplex-Hunter-UI
+
+A static html page was built to provide an overview of the generated results. 
+Open `docs/duplex-hunter-ui.html` in your local bronswer, load export results and view a summary.
+
+![Results Selection Page](docs/duplex-hunter-ui-selection-page.png)
+![Results Presentation Page](docs/duplex-hunter-ui-results-page.png)

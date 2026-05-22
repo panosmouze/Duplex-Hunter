@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Duplex Hunter</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<style>
+:root{
+  --bg:#0b1020;
+  --panel:#131c31cc;
+  --border:rgba(255,255,255,.08);
+  --text:#f4f7fb;
+  --muted:#97a3b6;
+  --accent:#6ea8ff;
+  --accent2:#8b5cf6;
+  --shadow:0 10px 35px rgba(0,0,0,.35);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left,#182848 0%,transparent 30%),
+    radial-gradient(circle at bottom right,#3b0764 0%,transparent 25%),
+    var(--bg);
+}
+
+.dh{
+  max-width:1400px;
+  margin:auto;
+  padding:2rem;
+}
+
+.dh-hero{
+  min-height:90vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.dh-hero-icon{
+  width:86px;
+  height:86px;
+  border-radius:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  font-size:34px;
+  box-shadow:var(--shadow);
+}
+
+.dh-hero h1{
+  margin:24px 0 10px;
+  font-size:68px;
+  font-weight:900;
+  letter-spacing:-3px;
+}
+
+.dh-hero p{
+  max-width:560px;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+.dh-dropzone{
+  margin-top:32px;
+  padding:22px 34px;
+  border-radius:24px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(18px);
+  cursor:pointer;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  transition:.25s ease;
+  box-shadow:var(--shadow);
+}
+
+.dh-dropzone:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.09);
+}
+
+.dh-dropzone input{
+  display:none;
+}
+
+.dh-topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+  gap:16px;
+}
+
+.dh-wordmark{
+  font-size:28px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.dh-btn{
+  border:none;
+  color:white;
+  cursor:pointer;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  padding:12px 18px;
+  border-radius:16px;
+  transition:.2s ease;
+}
+
+.dh-btn:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.1);
+}
+
+.dh-snaps{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:22px;
+}
+
+.dh-snap{
+  border:none;
+  cursor:pointer;
+  color:white;
+  padding:10px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,.05);
+}
+
+.dh-snap.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.dh-stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin-bottom:28px;
+}
+
+.dh-stat{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:24px;
+  backdrop-filter:blur(18px);
+  box-shadow:var(--shadow);
+}
+
+.dh-stat-n{
+  font-size:44px;
+  font-weight:900;
+}
+
+.dh-stat-l{
+  color:var(--muted);
+  margin-top:8px;
+}
+
+.dh-toolbar{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:24px;
+  position:sticky;
+  top:10px;
+  z-index:5;
+}
+
+.dh-search{
+  position:relative;
+  flex:1;
+  min-width:260px;
+}
+
+.dh-search i{
+  position:absolute;
+  top:50%;
+  left:16px;
+  transform:translateY(-50%);
+  opacity:.6;
+}
+
+.dh-search input{
+  width:100%;
+  height:54px;
+  border:none;
+  outline:none;
+  border-radius:18px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  padding:0 18px 0 48px;
+  color:white;
+  font-size:14px;
+}
+
+.dh-seg{
+  display:flex;
+  gap:10px;
+}
+
+.dh-seg button{
+  border:none;
+  cursor:pointer;
+  height:54px;
+  border-radius:16px;
+  padding:0 18px;
+  color:white;
+  background:rgba(255,255,255,.06);
+}
+
+.dh-seg button.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.dh-groups{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.dh-group{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:26px;
+  overflow:hidden;
+  backdrop-filter:blur(18px);
+  box-shadow:var(--shadow);
+}
+
+.dh-gh{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 22px;
+  cursor:pointer;
+}
+
+.dh-gh-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
+
+.dh-badge{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.dh-hash{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-family:monospace;
+  color:#d2dcef;
+}
+
+.dh-chev{
+  transition:.25s ease;
+}
+
+.dh-chev.open{
+  transform:rotate(180deg);
+}
+
+.dh-gfiles{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .35s ease;
+}
+
+.dh-gfiles.open{
+  max-height:5000px;
+}
+
+.dh-file{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px 22px;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+
+.dh-file:hover{
+  background:rgba(255,255,255,.03);
+}
+
+.dh-file-icon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.dh-file-info{
+  flex:1;
+  min-width:0;
+}
+
+.dh-file-name{
+  font-weight:700;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.dh-file-path{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.dh-copy{
+  border:none;
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  color:white;
+  cursor:pointer;
+  background:rgba(255,255,255,.06);
+}
+
+.dh-footer{
+  margin-top:24px;
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+}
+
+.dh-pagination{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-top:28px;
+}
+
+.dh-page-btn{
+  border:none;
+  cursor:pointer;
+  color:white;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  padding:12px 18px;
+  border-radius:14px;
+}
+
+.dh-page-info{
+  color:var(--muted);
+}
+
+.dh-empty{
+  text-align:center;
+  padding:6rem 2rem;
+}
+
+@media(max-width:768px){
+  .dh-hero h1{
+    font-size:46px;
+  }
+
+  .dh-toolbar{
+    position:static;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="dh">
+
+<div id="hero" class="dh-hero">
+
+  <div class="dh-hero-icon">
+    <i class="ti ti-scan"></i>
+  </div>
+
+  <h1>Duplex Hunter</h1>
+
+  <p>
+    Analyze duplicate files instantly with search,
+    paging, filtering, and snapshot browsing.
+  </p>
+
+  <label class="dh-dropzone">
+    <input type="file" id="dirInput" webkitdirectory directory multiple />
+    <i class="ti ti-folder-open"></i>
+    <span>Select Export Directory</span>
+  </label>
+
+</div>
+
+<div id="viewer" style="display:none;">
+
+  <div class="dh-topbar">
+
+    <div class="dh-wordmark">
+      <i class="ti ti-scan"></i>
+      Duplex Hunter
+    </div>
+
+    <button class="dh-btn" onclick="resetAll()">
+      Change Folder
+    </button>
+
+  </div>
+
+  <div id="snapsRow" class="dh-snaps"></div>
+
+  <div id="statsRow" class="dh-stats"></div>
+
+  <div class="dh-toolbar">
+
+    <div class="dh-seg">
+      <button id="tDupes" class="active" onclick="switchTab('dupes')">Duplicates</button>
+      <button id="tUniques" onclick="switchTab('uniques')">Uniques</button>
+    </div>
+
+    <div class="dh-search">
+      <i class="ti ti-search"></i>
+      <input
+        type="search"
+        id="searchBox"
+        placeholder="Search filename, path, extension, or hash..."
+        oninput="handleSearch(this.value)"
+      />
+    </div>
+
+    <button class="dh-btn" onclick="expandAll()">
+      <i class="ti ti-arrows-maximize"></i>
+    </button>
+
+    <button class="dh-btn" onclick="collapseAll()">
+      <i class="ti ti-arrows-minimize"></i>
+    </button>
+
+  </div>
+
+  <div id="groupsWrap" class="dh-groups"></div>
+
+  <div class="dh-pagination" id="pagination"></div>
+
+  <div id="footerRow" class="dh-footer"></div>
+
+</div>
+</div>
+
+<script>
+
+let snaps = [];
+let activeSnap = 0;
+let activeTab = 'dupes';
+
+let curGroups = [];
+let filteredGroups = [];
+
+let currentPage = 1;
+const PAGE_SIZE = 25;
+
+let searchTimeout;
+
+document.getElementById('dirInput')
+.addEventListener('change', function(){
+  loadDir(this.files);
+});
+
+function loadDir(files){
+
+  const arr = Array.from(files);
+  const map = {};
+
+  arr.forEach(f => {
+
+    const parts = (f.webkitRelativePath || f.name).split('/');
+
+    if(parts.length < 2) return;
+
+    const snap = parts.length === 2
+      ? parts[0]
+      : parts[1];
+
+    const base =
+      parts[parts.length - 1]
+      .replace('.json','');
+
+    if(!['duplicates','uniques','config'].includes(base))
+      return;
+
+    if(!map[snap])
+      map[snap] = { name:snap, files:{} };
+
+    map[snap].files[base] = f;
+
+  });
+
+  const names = Object.keys(map);
+
+  if(!names.length){
+    alert('No snapshot folders found.');
+    return;
+  }
+
+  Promise.all(names.map(n => parseSnap(map[n])))
+  .then(loaded => {
+
+    snaps = loaded.filter(Boolean);
+
+    document.getElementById('hero').style.display='none';
+    document.getElementById('viewer').style.display='block';
+
+    renderSnapBtns();
+    selectSnap(0);
+
+  });
+}
+
+function parseSnap(s){
+
+  const keys = Object.keys(s.files);
+
+  return Promise.all(
+    keys.map(k => new Promise(res => {
+
+      const r = new FileReader();
+
+      r.onload = e => {
+
+        try{
+          res([k, JSON.parse(e.target.result)]);
+        }catch{
+          res([k, null]);
+        }
+
+      };
+
+      r.readAsText(s.files[k]);
+
+    }))
+  ).then(pairs => {
+
+    const o = { name:s.name };
+
+    pairs.forEach(([k,v]) => o[k]=v);
+
+    return o;
+
+  });
+}
+
+function renderSnapBtns(){
+
+  const el = document.getElementById('snapsRow');
+
+  if(snaps.length <= 1){
+    el.style.display='none';
+    return;
+  }
+
+  el.style.display='flex';
+
+  el.innerHTML = snaps.map((s,i)=>`
+    <button
+      class="dh-snap ${i===activeSnap?'active':''}"
+      onclick="selectSnap(${i})"
+    >
+      ${s.name}
+    </button>
+  `).join('');
+}
+
+function selectSnap(i){
+
+  activeSnap=i;
+
+  renderSnapBtns();
+  renderStats(snaps[i]);
+
+  switchTab(activeTab);
+}
+
+function renderStats(s){
+
+  const dupes = s.duplicates || [];
+  const uniques = s.uniques || [];
+
+  const dupFiles =
+    dupes.reduce((a,d)=>a+(d[1]?.length||0),0);
+
+  const wasted =
+    dupes.reduce((a,d)=>a+((d[1]?.length||1)-1),0);
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="dh-stat">
+      <div class="dh-stat-n">${dupes.length}</div>
+      <div class="dh-stat-l">Duplicate Groups</div>
+    </div>
+
+    <div class="dh-stat">
+      <div class="dh-stat-n">${dupFiles}</div>
+      <div class="dh-stat-l">Duplicate Files</div>
+    </div>
+
+    <div class="dh-stat">
+      <div class="dh-stat-n">${wasted}</div>
+      <div class="dh-stat-l">Redundant Copies</div>
+    </div>
+
+    <div class="dh-stat">
+      <div class="dh-stat-n">${uniques.length}</div>
+      <div class="dh-stat-l">Unique Files</div>
+    </div>
+  `;
+}
+
+function switchTab(tab){
+
+  activeTab = tab;
+
+  document.getElementById('tDupes')
+    .classList.toggle('active',tab==='dupes');
+
+  document.getElementById('tUniques')
+    .classList.toggle('active',tab==='uniques');
+
+  const s = snaps[activeSnap];
+
+  curGroups = tab==='dupes'
+    ? (s.duplicates || [])
+    : (s.uniques || []);
+
+  filteredGroups = [...curGroups];
+
+  currentPage = 1;
+
+  renderGroups(filteredGroups);
+}
+
+function renderGroups(data){
+
+  const wrap = document.getElementById('groupsWrap');
+  const footer = document.getElementById('footerRow');
+
+  if(!data.length){
+
+    wrap.innerHTML = `
+      <div class="dh-empty">
+        <i class="ti ti-search-off" style="font-size:52px;opacity:.7;"></i>
+        <h3>No matches found</h3>
+        <div style="color:var(--muted)">
+          Try another filename, path, extension, or hash.
+        </div>
+      </div>
+    `;
+
+    document.getElementById('pagination').innerHTML='';
+    footer.innerHTML='';
+
+    return;
+  }
+
+  const totalPages =
+    Math.ceil(data.length / PAGE_SIZE);
+
+  const start =
+    (currentPage - 1) * PAGE_SIZE;
+
+  const end = start + PAGE_SIZE;
+
+  const paginated =
+    data.slice(start, end);
+
+  const resultCount =
+    data.reduce((a,d)=>a+(d[1]?.length||0),0);
+
+  footer.innerHTML = `
+    <span>${data.length} groups</span>
+    <span>${resultCount} files</span>
+  `;
+
+  wrap.innerHTML = paginated.map((entry,i)=>{
+
+    const hash = entry[0] || '';
+    const files = entry[1] || [];
+
+    const rows = files.map(f=>{
+
+      const norm = f.replace(/\\/g,'/');
+      const parts = norm.split('/');
+
+      const name = parts.pop();
+      const dir = parts.join('/');
+
+      return `
+        <div class="dh-file">
+
+          <div class="dh-file-icon">
+            <i class="ti ti-file"></i>
+          </div>
+
+          <div class="dh-file-info">
+            <div class="dh-file-name">${name}</div>
+            <div class="dh-file-path">${dir || '/'}</div>
+          </div>
+
+          <button class="dh-copy"
+            onclick="copyPath('${f.replace(/'/g,"\\'")}',this)">
+            <i class="ti ti-copy"></i>
+          </button>
+
+        </div>
+      `;
+
+    }).join('');
+
+    return `
+      <div class="dh-group">
+
+        <div class="dh-gh" onclick="toggle(${i})">
+
+          <div class="dh-gh-left">
+
+            <span class="dh-badge">
+              ${files.length} files
+            </span>
+
+            <span class="dh-hash">
+              ${hash}
+            </span>
+
+          </div>
+
+          <i class="ti ti-chevron-down dh-chev"
+             id="chev-${i}"></i>
+
+        </div>
+
+        <div class="dh-gfiles" id="gf-${i}">
+          ${rows}
+        </div>
+
+      </div>
+    `;
+
+  }).join('');
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages){
+
+  const el = document.getElementById('pagination');
+
+  if(totalPages <= 1){
+    el.innerHTML='';
+    return;
+  }
+
+  el.innerHTML = `
+    <button class="dh-page-btn"
+      onclick="prevPage()"
+      ${currentPage===1?'disabled':''}>
+      Previous
+    </button>
+
+    <div class="dh-page-info">
+      Page ${currentPage} of ${totalPages}
+    </div>
+
+    <button class="dh-page-btn"
+      onclick="nextPage()"
+      ${currentPage===totalPages?'disabled':''}>
+      Next
+    </button>
+  `;
+}
+
+function nextPage(){
+
+  const totalPages =
+    Math.ceil(filteredGroups.length / PAGE_SIZE);
+
+  if(currentPage < totalPages){
+
+    currentPage++;
+
+    renderGroups(filteredGroups);
+
+    window.scrollTo({
+      top:0,
+      behavior:'smooth'
+    });
+
+  }
+}
+
+function prevPage(){
+
+  if(currentPage > 1){
+
+    currentPage--;
+
+    renderGroups(filteredGroups);
+
+    window.scrollTo({
+      top:0,
+      behavior:'smooth'
+    });
+
+  }
+}
+
+function toggle(i){
+
+  document.getElementById(`gf-${i}`)
+    .classList.toggle('open');
+
+  document.getElementById(`chev-${i}`)
+    .classList.toggle('open');
+}
+
+function expandAll(){
+
+  document.querySelectorAll('.dh-gfiles')
+    .forEach(e=>e.classList.add('open'));
+
+  document.querySelectorAll('.dh-chev')
+    .forEach(e=>e.classList.add('open'));
+}
+
+function collapseAll(){
+
+  document.querySelectorAll('.dh-gfiles')
+    .forEach(e=>e.classList.remove('open'));
+
+  document.querySelectorAll('.dh-chev')
+    .forEach(e=>e.classList.remove('open'));
+}
+
+function handleSearch(v){
+
+  clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(()=>{
+    doFilter(v);
+  },150);
+}
+
+function doFilter(q){
+
+  const query = q.trim().toLowerCase();
+
+  if(!query){
+
+    filteredGroups = [...curGroups];
+
+    currentPage = 1;
+
+    renderGroups(filteredGroups);
+
+    return;
+  }
+
+  filteredGroups = curGroups.filter(entry => {
+
+    const hash =
+      String(entry?.[0] || '')
+      .toLowerCase();
+
+    const files =
+      Array.isArray(entry?.[1])
+      ? entry[1]
+      : [];
+
+    if(hash.includes(query))
+      return true;
+
+    return files.some(file => {
+
+      const normalized =
+        String(file).toLowerCase();
+
+      const filename =
+        normalized.split('/').pop();
+
+      return (
+        normalized.includes(query) ||
+        filename.includes(query)
+      );
+
+    });
+
+  });
+
+  currentPage = 1;
+
+  renderGroups(filteredGroups);
+}
+
+function copyPath(path, btn){
+
+  navigator.clipboard.writeText(path)
+  .then(()=>{
+
+    const orig = btn.innerHTML;
+
+    btn.innerHTML='<i class="ti ti-check"></i>';
+
+    setTimeout(()=>{
+      btn.innerHTML=orig;
+    },1200);
+
+  });
+}
+
+function resetAll(){
+
+  snaps=[];
+  activeSnap=0;
+
+  document.getElementById('hero')
+    .style.display='flex';
+
+  document.getElementById('viewer')
+    .style.display='none';
+
+  document.getElementById('dirInput')
+    .value='';
+}
+
+</script>
+</body>
+</html>
