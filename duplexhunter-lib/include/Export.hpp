@@ -1,8 +1,9 @@
 #ifndef _EXPORT_HPP_
 #define _EXPORT_HPP_
 
+#include "Config.hpp"
+
 #include <nlohmann/json.hpp>
-#include <Config.hpp>
 #include <filesystem>
 #include <chrono>
 #include <iomanip>

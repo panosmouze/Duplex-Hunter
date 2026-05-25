@@ -1,6 +1,7 @@
-#include <FileScanner.hpp>
+#include "FileScanner.hpp"
 
 #include <iostream>
+#include <functional>
 
 FileScanner::FileScanner(const std::string& path, bool fastHash, uint16_t depth) {
     if (!fs::exists(path)) {
@@ -16,22 +17,16 @@ FileScanner::~FileScanner() {
 }
 
 void FileScanner::runScan() {
-    std::cout << "Scanning directories in: " << this->path << std::endl;
     scan(path, depth);
-    std::cout << "Scanning " << this->path << " completed." <<std::endl;
 }
 
-void FileScanner::runHashes() {
-    std::cout << "Calculating hashes for files in: " << this->path << std::endl;
+void FileScanner::runHashes(std::function<void()> cb) {
     std::size_t scannerTotal = this->files.size();
     std::size_t scannerProgress = 0;
     for (auto it_file = getBeginIterator(); it_file != getEndIterator(); ++it_file) {
         (*it_file)->calcHash(this->fastHash);
-        scannerProgress += 1;
-        std::cout << "\rProgress: " << (scannerProgress*100 / scannerTotal) << "%" << std::flush;
+        cb();
     }
-    std::cout << std::endl;
-    std::cout << "Hashes calculated for files in: " << this->path << std::endl;
 }
 
 std::vector<std::unique_ptr<FileEntry>>::iterator FileScanner::getBeginIterator() {
@@ -44,6 +39,10 @@ std::vector<std::unique_ptr<FileEntry>>::iterator FileScanner::getEndIterator() 
 
 std::size_t FileScanner::getNumberOfFiles() {
     return files.size();
+}
+
+std::string FileScanner::getPath() {
+    return this->path;
 }
 
 void FileScanner::scan(const std::string& it_path, uint16_t it_depth) {

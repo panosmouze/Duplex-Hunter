@@ -1,11 +1,12 @@
 #ifndef _CONFIG_HPP_
 #define _CONFIG_HPP_
 
+#include "export.h"
 #include <vector>
 #include <string>
 #include <cstdint>
 
-struct Config {
+struct DUPLEX_API Config {
     std::vector<std::string> paths;
     uint16_t depth = UINT16_MAX;
     std::string exportPath;
