@@ -3,13 +3,17 @@
 #include <xxhash.h>
 #include <fstream>
 
-FileEntry::FileEntry(const fs::path& path, bool fastHash) {
+FileEntry::FileEntry(const fs::path& path) {
     this->path = path;
-    this->hash = hashFile(path, fastHash);
+    this->hash = 0;
 }
 
 FileEntry::~FileEntry() {
 
+}
+
+void FileEntry::calcHash(bool fastHash) {
+    this->hash = hashFile(path, fastHash);
 }
 
 uint64_t FileEntry::getHash() {

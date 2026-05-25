@@ -25,8 +25,17 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    std::size_t total = 0;
     for (auto& scanner : scanners) {
-        scanner->run();
+        scanner->runScan();
+        total += scanner->getNumberOfFiles();
+    }
+
+    std::size_t totalProgress = 0;
+    for (auto& scanner : scanners) {
+        scanner->runHashes();
+        totalProgress += scanner->getNumberOfFiles();
+        std::cout << "Total progress: " << (totalProgress * 100 / total) << "%" << std::endl;
     }
 
     FileMatch match(scanners);

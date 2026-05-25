@@ -10,9 +10,10 @@ private:
     fs::path path;
 
 public:
-    FileEntry(const fs::path& path, bool fastHash = false);
+    FileEntry(const fs::path& path);
     ~FileEntry();
 
+    void calcHash(bool fastHash = false);
     uint64_t getHash();
     fs::path getPath();
 

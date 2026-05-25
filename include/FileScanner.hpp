@@ -18,7 +18,9 @@ public:
     FileScanner(const std::string& path, bool fastHash = false, uint16_t depth = MAX_DEPTH);
     ~FileScanner();
 
-    void run();
+    void runScan();
+    void runHashes();
+    std::size_t getNumberOfFiles();
 
     std::vector<std::unique_ptr<FileEntry>>::iterator getBeginIterator();
     std::vector<std::unique_ptr<FileEntry>>::iterator getEndIterator();
