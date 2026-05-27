@@ -2,39 +2,37 @@
 #define DUPLEX_HUNTER_HPP
 
 #include "export.h"
+#include "DuplexHunterConfig.hpp"
+#include "FileScanner.hpp"
+#include "FileMatch.hpp"
+#include "DuplexHunterProgressInfo.hpp"
 #include <vector>
 #include <string>
 #include <memory>
 #include <cstdint>
 #include <functional>
 
-class FileScanner;
-class FileMatch;
-class ProgressInfo;
-
-class DUPLEX_API DuplexHunter
+class DUPLEXHUNTER_API DuplexHunter
 {
 public:
-    DUPLEX_API DuplexHunter(const std::vector<std::string>& paths, uint16_t depth, bool fastHash);
-    DUPLEX_API ~DuplexHunter();
+    DUPLEXHUNTER_API DuplexHunter(const DuplexHunterConfig& config);
+    DUPLEXHUNTER_API ~DuplexHunter();
 
-    DUPLEX_API void run();
-    DUPLEX_API void scan();
-    DUPLEX_API void hashFiles();
-    DUPLEX_API void match();
-    DUPLEX_API void exportResults(const std::string& path);
+    DUPLEXHUNTER_API void run();
+    DUPLEXHUNTER_API void scan();
+    DUPLEXHUNTER_API void hashFiles();
+    DUPLEXHUNTER_API void match();
+    DUPLEXHUNTER_API void exportResults();
 
-    DUPLEX_API void setProgressCallback(std::function<void(ProgressInfo)> cb);
+    DUPLEXHUNTER_API void setProgressCallback(std::function<void(DuplexHunterProgressInfo)> cb);
 
 private:
-    std::vector<std::string> paths;
-    uint16_t depth;
-    bool fastHash;
+    DuplexHunterConfig config;
 
     std::vector<std::shared_ptr<FileScanner>> scanners;
     std::unique_ptr<FileMatch> matcher;
 
-    std::function<void(ProgressInfo)> progressCallback;
+    std::function<void(DuplexHunterProgressInfo)> progressCallback;
 
     std::size_t totalFiles = 0;
     std::size_t processedFiles = 0;

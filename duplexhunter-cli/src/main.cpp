@@ -1,10 +1,11 @@
-#include <DuplexHunter.hpp>
-#include <ProgressInfo.hpp>
-#include <Config.hpp>
+#include "DuplexHunter.hpp"
+#include "DuplexHunterProgressInfo.hpp"
+#include "DuplexHunterConfig.hpp"
+
 #include <iostream>
 #include <iomanip>
 
-static void printProgress(const ProgressInfo& info)
+static void printProgress(const DuplexHunterProgressInfo& info)
 {
     switch (info.status) {
         case DuplexHunterStatus::Scanning:
@@ -23,7 +24,7 @@ static void printProgress(const ProgressInfo& info)
             break;
         }
         case DuplexHunterStatus::Matching:
-            std::cout << std::endl << "Matching" << std::endl;
+            std::cout << std::endl << "Matching Results" << std::endl;
             break;
         case DuplexHunterStatus::Done:
             std::cout << "Done" << std::endl;
@@ -35,19 +36,17 @@ static void printProgress(const ProgressInfo& info)
 
 int main(int argc, char* argv[])
 {
-    Config cfg;
+    DuplexHunterConfig cfg;
     if (!cfg.parseArgs(argc, argv)) {
         std::cerr << "Configuration items missing or unknown." << std::endl;
         return 1;
     }
 
     try {
-        DuplexHunter hunter(cfg.paths, cfg.depth, cfg.fastHash);
-
+        DuplexHunter hunter(cfg);
         hunter.setProgressCallback(printProgress);
-
         hunter.run();
-        hunter.exportResults(cfg.exportPath);
+        hunter.exportResults();
 
     } catch (const std::exception& e) {
         std::cerr << "\nError: " << e.what() << std::endl;

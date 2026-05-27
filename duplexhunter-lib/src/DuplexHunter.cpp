@@ -1,12 +1,12 @@
 #include "DuplexHunter.hpp"
 #include "FileScanner.hpp"
 #include "FileMatch.hpp"
-#include "ProgressInfo.hpp"
+#include "DuplexHunterProgressInfo.hpp"
 #include "Export.hpp"
 #include <stdexcept>
 
-DuplexHunter::DuplexHunter(const std::vector<std::string>& paths, uint16_t depth, bool fastHash)
-    : paths(paths), depth(depth), fastHash(fastHash)
+DuplexHunter::DuplexHunter(const DuplexHunterConfig& config)
+    : config(config)
 {}
 
 DuplexHunter::~DuplexHunter() = default;
@@ -16,9 +16,9 @@ void DuplexHunter::scan()
     scanners.clear();
     totalFiles = 0;
 
-    for (const std::string& path : paths) {
+    for (const std::string& path : config.paths) {
     if (progressCallback) progressCallback({ DuplexHunterStatus::Scanning, path, 0.0 });
-        auto scanner = std::make_shared<FileScanner>(path, fastHash, depth);
+        auto scanner = std::make_shared<FileScanner>(path, config.fastHash, config.depth);
         scanner->runScan();
         totalFiles += scanner->getNumberOfFiles();
         scanners.push_back(std::move(scanner));
@@ -56,14 +56,14 @@ void DuplexHunter::run()
     match();
 }
 
-void DuplexHunter::setProgressCallback(std::function<void(ProgressInfo)> cb)
+void DuplexHunter::setProgressCallback(std::function<void(DuplexHunterProgressInfo)> cb)
 {
     progressCallback = std::move(cb);
 }
 
-void DuplexHunter::exportResults(const std::string& path)
+void DuplexHunter::exportResults()
 {
-    Export exp({this->paths, this->depth, path, this->fastHash});
+    Export exp(config);
     exp.saveJson("duplicates.json", matcher->getDuplicates());
     exp.saveJson("uniques.json", matcher->getUnique());
 }

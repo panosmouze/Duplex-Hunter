@@ -1,12 +1,12 @@
-#ifndef _CONFIG_HPP_
-#define _CONFIG_HPP_
+#ifndef _DUPLEX_HUNTER_CONFIG_HPP_
+#define _DUPLEX_HUNTER_CONFIG_HPP_
 
 #include "export.h"
 #include <vector>
 #include <string>
 #include <cstdint>
 
-struct DUPLEX_API Config {
+struct DUPLEXHUNTER_API DuplexHunterConfig {
     std::vector<std::string> paths;
     uint16_t depth = UINT16_MAX;
     std::string exportPath;
@@ -16,4 +16,4 @@ struct DUPLEX_API Config {
 };
 
 
-#endif //_CONFIG_HPP_
+#endif //_DUPLEX_HUNTER_CONFIG_HPP_

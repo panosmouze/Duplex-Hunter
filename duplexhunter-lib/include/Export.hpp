@@ -1,7 +1,7 @@
 #ifndef _EXPORT_HPP_
 #define _EXPORT_HPP_
 
-#include "Config.hpp"
+#include "DuplexHunterConfig.hpp"
 
 #include <nlohmann/json.hpp>
 #include <filesystem>
@@ -18,7 +18,7 @@ using json = nlohmann::json;
 class Export
 {
 public:
-    Export(const Config& cfg);
+    Export(const DuplexHunterConfig& cfg);
     ~Export();
     void saveJson(const std::string& fileName, const json& j);
 
@@ -28,7 +28,7 @@ private:
 
 private:
     fs::path path;
-    Config cfg;
+    DuplexHunterConfig cfg;
     std::string timestamp;
 };
 

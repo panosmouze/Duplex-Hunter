@@ -3,12 +3,12 @@
 
 #if defined(_WIN32)
     #ifdef DUPLEXHUNTER_EXPORTS
-        #define DUPLEX_API __declspec(dllexport)
+        #define DUPLEXHUNTER_API __declspec(dllexport)
     #else
-        #define DUPLEX_API __declspec(dllimport)
+        #define DUPLEXHUNTER_API __declspec(dllimport)
     #endif
 #else
-    #define DUPLEX_API __attribute__((visibility("default")))
+    #define DUPLEXHUNTER_API __attribute__((visibility("default")))
 #endif
 
 #endif //__EXPORT_DUPLEXHUNTER_H

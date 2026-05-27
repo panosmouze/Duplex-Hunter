@@ -1,8 +1,8 @@
-#include "Config.hpp"
+#include "DuplexHunterConfig.hpp"
 
 #include <iostream>
 
-bool Config::parseArgs(int argc, char* argv[]) {
+bool DuplexHunterConfig::parseArgs(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
 

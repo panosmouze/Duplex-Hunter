@@ -1,6 +1,6 @@
 #include "Export.hpp"
 
-Export::Export(const Config& cfg) {
+Export::Export(const DuplexHunterConfig& cfg) {
     this->cfg = cfg;
     this->timestamp = makeTimestamp();
     this->path = fs::path(cfg.exportPath) / this->timestamp;
