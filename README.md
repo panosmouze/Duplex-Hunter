@@ -3,14 +3,14 @@
 Simple tool to recursively scan directories, hash files, and find duplicates.
 Supports fast or full hashing and exports results to JSON.
 
-## Examples Usage
+## Examples
 
 ### Find Duplicates
 
 Scan one or more directories and identify duplicate files.
 
 ```bash
-duplexhunter --path /home/user/photos --path /home/user/downloads --export-path /tmp/results
+duplexhunter-cli --path /home/user/photos --path /home/user/downloads --export-path /tmp/results
 ```
 
 ### Backup Integrity Check
@@ -19,7 +19,7 @@ Verify that all files from the source were copied correctly to the backup.
 Full hashing is used by default to ensure byte-level accuracy — do not use `--enable-fast-hash` for this use case.
 
 ```bash
-duplexhunter --path /home/user/documents --path /mnt/backup/documents --export-path /tmp/results
+duplexhunter-cli --path /home/user/documents --path /mnt/backup/documents --export-path /tmp/results
 ```
 
 Any files appearing only in one of the two paths were either not backed up or have been modified.
@@ -36,7 +36,13 @@ of millions of files, the chance of a false match is astronomically small.
 
 However, if absolute certainty is required, results should be verified manually.
 
-## Build Instructions
+## Build Process
+
+### Prerequisites
+
+- [xxHash](https://github.com/Cyan4973/xxHash) library
+
+### Instructions
 
 ```bash
 git clone git@github.com:panosmouze/Duplex-Hunter.git
