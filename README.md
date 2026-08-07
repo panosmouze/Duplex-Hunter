@@ -60,9 +60,9 @@ cmake --install . --prefix ../out
 duplexhunter [options]
 
 --path <path>           Path to scan (can be repeated)
---depth <n>             Max recursion depth
---export-path <path>    Directory to save results
---enable-fast-hash      Use faster (partial) hashing
+--depth <n>             Max recursion depth (default UINT16_MAX)
+--export-path <path>    Directory to save results (default .)
+--enable-fast-hash      Use faster (partial) hashing (default false)
 --help                  Show help
 ```
 

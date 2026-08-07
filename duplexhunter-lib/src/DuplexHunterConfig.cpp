@@ -2,7 +2,14 @@
 
 #include <iostream>
 
+#define DEFAULT_DEPTH UINT16_MAX
+#define DEFAULT_FAST_HASH false
+#define DEFAULT_EXPORT_PATH "."
+
 bool DuplexHunterConfig::parseArgs(int argc, char* argv[]) {
+    depth = DEFAULT_DEPTH;
+    fastHash = DEFAULT_FAST_HASH;
+    exportPath = std::string(DEFAULT_EXPORT_PATH);
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
 
