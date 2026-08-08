@@ -3,8 +3,9 @@
 #include <xxhash.h>
 #include <fstream>
 
-FileEntry::FileEntry(const fs::path& path) {
+FileEntry::FileEntry(const fs::path& path, uintmax_t size) {
     this->path = path;
+    this->size = size;
     this->hash = 0;
 }
 
@@ -22,6 +23,10 @@ uint64_t FileEntry::getHash() {
 
 fs::path FileEntry::getPath() {
     return path;
+}
+
+uintmax_t FileEntry::getSize() {
+    return size;
 }
 
 uint64_t FileEntry::hashFile(const fs::path& filepath, bool fastHash) {

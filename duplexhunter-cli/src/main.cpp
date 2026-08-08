@@ -46,6 +46,17 @@ int main(int argc, char* argv[])
         DuplexHunter hunter(cfg);
         hunter.setProgressCallback(printProgress);
         hunter.run();
+
+        auto duplicates = hunter.getDuplicates();
+        auto uniques = hunter.getUnique();
+        std::size_t duplicateFiles = 0;
+        for (const auto& group : duplicates) {
+            duplicateFiles += group.files.size();
+        }
+
+        std::cout << duplicates.size() << " duplicate group(s) covering " << duplicateFiles
+                   << " file(s), " << uniques.size() << " unique file(s)." << std::endl;
+
         hunter.exportResults();
 
     } catch (const std::exception& e) {

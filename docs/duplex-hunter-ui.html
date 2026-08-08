@@ -280,6 +280,12 @@ body{
   color:#d2dcef;
 }
 
+.dh-size{
+  flex-shrink:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
 .dh-chev{
   transition:.25s ease;
 }
@@ -615,10 +621,10 @@ function renderStats(s){
   const uniques = s.uniques || [];
 
   const dupFiles =
-    dupes.reduce((a,d)=>a+(d[1]?.length||0),0);
+    dupes.reduce((a,d)=>a+(d.files?.length||0),0);
 
   const wasted =
-    dupes.reduce((a,d)=>a+((d[1]?.length||1)-1),0);
+    dupes.reduce((a,d)=>a+((d.files?.length||1)-1),0);
 
   document.getElementById('statsRow').innerHTML = `
     <div class="dh-stat">
@@ -666,6 +672,22 @@ function switchTab(tab){
   renderGroups(filteredGroups);
 }
 
+function formatSize(bytes){
+
+  if(bytes == null) return '';
+
+  const units = ['B','KB','MB','GB','TB'];
+  let n = bytes;
+  let i = 0;
+
+  while(n >= 1024 && i < units.length - 1){
+    n /= 1024;
+    i++;
+  }
+
+  return `${i === 0 ? n : n.toFixed(1)} ${units[i]}`;
+}
+
 function renderGroups(data){
 
   const wrap = document.getElementById('groupsWrap');
@@ -701,7 +723,7 @@ function renderGroups(data){
     data.slice(start, end);
 
   const resultCount =
-    data.reduce((a,d)=>a+(d[1]?.length||0),0);
+    data.reduce((a,d)=>a+(d.files?.length||0),0);
 
   footer.innerHTML = `
     <span>${data.length} groups</span>
@@ -710,8 +732,9 @@ function renderGroups(data){
 
   wrap.innerHTML = paginated.map((entry,i)=>{
 
-    const hash = entry[0] || '';
-    const files = entry[1] || [];
+    const hash = entry.hash;
+    const size = entry.size;
+    const files = entry.files || [];
 
     const rows = files.map(f=>{
 
@@ -754,8 +777,12 @@ function renderGroups(data){
               ${files.length} files
             </span>
 
+            <span class="dh-size">
+              ${formatSize(size)}
+            </span>
+
             <span class="dh-hash">
-              ${hash}
+              ${hash != null ? hash : 'unique size — not hashed'}
             </span>
 
           </div>
@@ -894,12 +921,12 @@ function doFilter(q){
   filteredGroups = curGroups.filter(entry => {
 
     const hash =
-      String(entry?.[0] || '')
+      String(entry?.hash ?? '')
       .toLowerCase();
 
     const files =
-      Array.isArray(entry?.[1])
-      ? entry[1]
+      Array.isArray(entry?.files)
+      ? entry.files
       : [];
 
     if(hash.includes(query))

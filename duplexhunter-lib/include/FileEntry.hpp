@@ -8,14 +8,16 @@ class FileEntry {
 private:
     uint64_t hash;
     fs::path path;
+    uintmax_t size;
 
 public:
-    FileEntry(const fs::path& path);
+    FileEntry(const fs::path& path, uintmax_t size);
     ~FileEntry();
 
     void calcHash(bool fastHash = false);
     uint64_t getHash();
     fs::path getPath();
+    uintmax_t getSize();
 
     static uint64_t hashFile(const fs::path& filepath, bool fastHash);
 };

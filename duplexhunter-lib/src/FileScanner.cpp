@@ -1,15 +1,15 @@
 #include "FileScanner.hpp"
 
 #include <iostream>
-#include <functional>
 
-FileScanner::FileScanner(const std::string& path, bool fastHash, uint16_t depth) {
+FileScanner::FileScanner(FileCollector& collector, const std::string& path, uint16_t depth)
+    : collector(collector)
+{
     if (!fs::exists(path)) {
         throw std::invalid_argument("Error: Path does not exist: " + path);
     }
     this->path = path;
     this->depth = depth;
-    this->fastHash = fastHash;
 }
 
 FileScanner::~FileScanner() {
@@ -18,27 +18,6 @@ FileScanner::~FileScanner() {
 
 void FileScanner::runScan() {
     scan(path, depth);
-}
-
-void FileScanner::runHashes(std::function<void()> cb) {
-    std::size_t scannerTotal = this->files.size();
-    std::size_t scannerProgress = 0;
-    for (auto it_file = getBeginIterator(); it_file != getEndIterator(); ++it_file) {
-        (*it_file)->calcHash(this->fastHash);
-        cb();
-    }
-}
-
-std::vector<std::unique_ptr<FileEntry>>::iterator FileScanner::getBeginIterator() {
-    return files.begin();
-}
-
-std::vector<std::unique_ptr<FileEntry>>::iterator FileScanner::getEndIterator() {
-    return files.end();
-}
-
-std::size_t FileScanner::getNumberOfFiles() {
-    return files.size();
 }
 
 std::string FileScanner::getPath() {
@@ -52,7 +31,7 @@ void FileScanner::scan(const std::string& it_path, uint16_t it_depth) {
                 if (entry.is_directory() && it_depth > MIN_DEPTH) {
                     scan(entry.path(), it_depth - 1);
                 } else if (entry.is_regular_file()) {
-                    files.push_back(std::make_unique<FileEntry>(entry.path()));
+                    collector.addFile(std::make_unique<FileEntry>(entry.path(), entry.file_size()));
                 }
             } catch (const fs::filesystem_error& e) {
                 std::cerr << "Warning: No access to file entry: " << entry.path() << std::endl;
@@ -62,4 +41,3 @@ void FileScanner::scan(const std::string& it_path, uint16_t it_depth) {
         std::cerr << "Warning: No access to directory: " << it_path << std::endl;
     }
 }
-
