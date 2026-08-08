@@ -15,7 +15,7 @@ void FileMatch::run() {
 }
 
 void FileMatch::match() {
-    for (auto scanner : scanners) {
+    for (const auto& scanner : scanners) {
         for (auto it_file = scanner->getBeginIterator(); it_file != scanner->getEndIterator(); ++it_file) {
             hashToPath[(*it_file)->getHash()].push_back(it_file->get()->getPath());
         }

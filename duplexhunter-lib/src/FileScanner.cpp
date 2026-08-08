@@ -49,9 +49,9 @@ void FileScanner::scan(const std::string& it_path, uint16_t it_depth) {
     try {
         for (auto& entry : fs::directory_iterator(it_path)) {
             try {
-                if (fs::is_directory(entry) && it_depth > MIN_DEPTH) {
+                if (entry.is_directory() && it_depth > MIN_DEPTH) {
                     scan(entry.path(), it_depth - 1);
-                } else if (fs::is_regular_file(entry)) {
+                } else if (entry.is_regular_file()) {
                     files.push_back(std::make_unique<FileEntry>(entry.path()));
                 }
             } catch (const fs::filesystem_error& e) {
