@@ -5,28 +5,46 @@
 #include <iostream>
 #include <iomanip>
 
+static bool barActive = false;
+
+static void printBar(const char* label, const DuplexHunterProgressInfo& info)
+{
+    int percent = static_cast<int>(info.progress * 100);
+    int filled  = percent / 5;
+    std::cout << "\033[2K\r" << label << " ["
+              << std::string(filled, '#')
+              << std::string(20 - filled, ' ')
+              << "] "
+              << std::setw(3) << percent << "% "
+              << info.path
+              << std::flush;
+    barActive = true;
+}
+
+static void endBar()
+{
+    if (barActive) std::cout << std::endl;
+    barActive = false;
+}
+
 static void printProgress(const DuplexHunterProgressInfo& info)
 {
     switch (info.status) {
         case DuplexHunterStatus::Scanning:
             std::cout << "Scanning " << info.path << std::endl;
             break;
-        case DuplexHunterStatus::Hashing: {
-            int percent = static_cast<int>(info.progress * 100);
-            int filled  = percent / 5;
-            std::cout << "\033[2K\rHashing  ["
-                      << std::string(filled, '#')
-                      << std::string(20 - filled, ' ')
-                      << "] "
-                      << std::setw(3) << percent << "% "
-                      << info.path
-                      << std::flush;
+        case DuplexHunterStatus::Hashing:
+            printBar("Hashing  ", info);
             break;
-        }
         case DuplexHunterStatus::Matching:
-            std::cout << std::endl << "Matching Results" << std::endl;
+            endBar();
+            std::cout << "Matching Results" << std::endl;
+            break;
+        case DuplexHunterStatus::Analyzing:
+            printBar("Analyzing", info);
             break;
         case DuplexHunterStatus::Done:
+            endBar();
             std::cout << "Done" << std::endl;
             break;
         default:

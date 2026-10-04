@@ -17,6 +17,8 @@
   --accent:#6ea8ff;
   --accent2:#8b5cf6;
   --shadow:0 10px 35px rgba(0,0,0,.35);
+  --warn:#fbbf24;
+  --bad:#f87171;
 }
 
 *{
@@ -270,6 +272,7 @@ body{
   border-radius:999px;
   font-size:11px;
   font-weight:700;
+  white-space:nowrap;
 }
 
 .dh-hash{
@@ -391,6 +394,150 @@ body{
   padding:6rem 2rem;
 }
 
+.dh-stat.clickable{
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.dh-stat.clickable:hover{
+  transform:translateY(-2px);
+  border-color:rgba(110,168,255,.4);
+}
+
+.dh-stat-n.warn{
+  color:var(--warn);
+}
+
+.dh-stat-n.bad{
+  color:var(--bad);
+}
+
+.dh-filter{
+  height:54px;
+  border-radius:16px;
+  padding:0 16px;
+  color:white;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  font-size:14px;
+  cursor:pointer;
+}
+
+.dh-filter option{
+  background:#131c31;
+}
+
+.dh-gh-main{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+
+.dh-summary{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.dh-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:600;
+  background:rgba(255,255,255,.07);
+  color:#d2dcef;
+  white-space:nowrap;
+}
+
+.dh-chip.warn{
+  background:rgba(251,191,36,.14);
+  color:var(--warn);
+}
+
+.dh-chip.good{
+  background:rgba(110,168,255,.15);
+  color:var(--accent);
+}
+
+.dh-chip.bad{
+  background:rgba(248,113,113,.15);
+  color:var(--bad);
+}
+
+.dh-details{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:14px;
+  padding:18px 22px;
+  border-top:1px solid rgba(255,255,255,.05);
+  background:rgba(0,0,0,.12);
+}
+
+.dh-sec{
+  min-width:0;
+}
+
+.dh-sec h4{
+  margin:0 0 8px;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--accent);
+}
+
+.dh-kv{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:4px 14px;
+  font-size:13px;
+}
+
+.dh-kv dt{
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+.dh-kv dd{
+  margin:0;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.dh-mono{
+  font-family:monospace;
+}
+
+.dh-issues{
+  margin:8px 0 0;
+  padding-left:18px;
+  color:var(--bad);
+  font-size:13px;
+  line-height:1.6;
+}
+
+.dh-issues.warn{
+  color:var(--warn);
+  margin-top:6px;
+}
+
+.dh-btn.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.dh-file-meta{
+  margin-top:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
 @media(max-width:768px){
   .dh-hero h1{
     font-size:46px;
@@ -398,6 +545,20 @@ body{
 
   .dh-toolbar{
     position:static;
+  }
+
+  .dh-stats{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+
+  .dh-stat{
+    padding:16px;
+    border-radius:18px;
+  }
+
+  .dh-stat-n{
+    font-size:30px;
   }
 }
 </style>
@@ -417,6 +578,8 @@ body{
   <p>
     Analyze duplicate files instantly with search,
     paging, filtering, and snapshot browsing.
+    Exports made with <code>--analyze</code> also show
+    file types, media details, and integrity checks.
   </p>
 
   <label class="dh-dropzone">
@@ -458,10 +621,29 @@ body{
       <input
         type="search"
         id="searchBox"
-        placeholder="Search filename, path, extension, or hash..."
+        placeholder="Search filename, path, extension, hash, type, or codec..."
         oninput="handleSearch(this.value)"
       />
     </div>
+
+    <select id="filterSel" class="dh-filter" onchange="setFilter(this.value)" style="display:none;">
+      <option value="all">All files</option>
+      <option value="video">Video</option>
+      <option value="audio">Audio</option>
+      <option value="image">Images</option>
+      <option value="other">Other</option>
+      <option value="mismatch">Extension mismatch</option>
+      <option value="damaged">Damaged or unreadable media</option>
+      <option value="gps">GPS location</option>
+      <option value="vfr">Variable frame rate</option>
+      <option value="nosubs">Videos without subtitles</option>
+      <option value="subissues">Subtitle problems</option>
+    </select>
+
+    <button class="dh-btn" id="hideSubsBtn" onclick="toggleSubtitleFiles()"
+      title="Hide subtitle files, which are also listed with their videos" style="display:none;">
+      <i class="ti ti-message-off"></i>
+    </button>
 
     <button class="dh-btn" onclick="expandAll()">
       <i class="ti ti-arrows-maximize"></i>
@@ -495,6 +677,9 @@ let currentPage = 1;
 const PAGE_SIZE = 25;
 
 let searchTimeout;
+let searchQuery = '';
+let activeFilter = 'all';
+let hideSubtitleFiles = false;
 
 document.getElementById('dirInput')
 .addEventListener('change', function(){
@@ -520,7 +705,7 @@ function loadDir(files){
       parts[parts.length - 1]
       .replace('.json','');
 
-    if(!['duplicates','uniques','config'].includes(base))
+    if(!['duplicates','uniques','config','analysis'].includes(base))
       return;
 
     if(!map[snap])
@@ -563,7 +748,10 @@ function parseSnap(s){
       r.onload = e => {
 
         try{
-          res([k, JSON.parse(e.target.result)]);
+          // Hashes are 64-bit integers, which lose precision as JS numbers.
+          const text = e.target.result
+            .replace(/("hash"\s*:\s*)(\d+)/g, '$1"$2"');
+          res([k, JSON.parse(text)]);
         }catch{
           res([k, null]);
         }
@@ -578,6 +766,8 @@ function parseSnap(s){
     const o = { name:s.name };
 
     pairs.forEach(([k,v]) => o[k]=v);
+
+    indexAnalysis(o);
 
     return o;
 
@@ -608,6 +798,12 @@ function renderSnapBtns(){
 function selectSnap(i){
 
   activeSnap=i;
+  activeFilter='all';
+
+  const sel = document.getElementById('filterSel');
+  sel.value = 'all';
+  sel.style.display = snaps[i].analysisByPath ? '' : 'none';
+  document.getElementById('hideSubsBtn').style.display = snaps[i].analysisByPath ? '' : 'none';
 
   renderSnapBtns();
   renderStats(snaps[i]);
@@ -646,7 +842,42 @@ function renderStats(s){
       <div class="dh-stat-n">${uniques.length}</div>
       <div class="dh-stat-l">Unique Files</div>
     </div>
+  ` + analysisStats(s);
+}
+
+function analysisStats(s){
+
+  if(!Array.isArray(s.analysis)) return '';
+
+  let media = 0, mismatch = 0, damaged = 0, gps = 0;
+
+  s.analysis.forEach(a => {
+
+    const files = a.files || [];
+    const fl = flagsOf(a);
+
+    if(kindOf(a) !== 'other') media += files.length;
+    mismatch += files.filter(f => f.extensionMatchesContent === false).length;
+    if(fl.damaged || fl.unreadable) damaged += files.length;
+    if(fl.gps) gps += files.length;
+
+  });
+
+  const card = (n, label, cls, filter) => `
+    <div class="dh-stat${filter ? ' clickable' : ''}"
+      ${filter ? `onclick="setFilter('${filter}')" title="Show in the current list"` : ''}>
+      <div class="dh-stat-n ${n ? cls : ''}">${n}</div>
+      <div class="dh-stat-l">${label}</div>
+    </div>
   `;
+
+  const level = s.config?.analysisLevel;
+
+  return (level ? card(level, 'Analysis Level', '', null) : '')
+    + card(media, 'Media Files', '', null)
+    + card(mismatch, 'Extension Mismatches', 'warn', 'mismatch')
+    + card(damaged, 'Damaged or Unreadable Media', 'bad', 'damaged')
+    + card(gps, 'Images with GPS Location', 'warn', 'gps');
 }
 
 function switchTab(tab){
@@ -665,11 +896,7 @@ function switchTab(tab){
     ? (s.duplicates || [])
     : (s.uniques || []);
 
-  filteredGroups = [...curGroups];
-
-  currentPage = 1;
-
-  renderGroups(filteredGroups);
+  applyFilters();
 }
 
 function formatSize(bytes){
@@ -688,6 +915,476 @@ function formatSize(bytes){
   return `${i === 0 ? n : n.toFixed(1)} ${units[i]}`;
 }
 
+const KIND_ICONS = {
+  video:'ti-movie',
+  audio:'ti-music',
+  image:'ti-photo',
+  other:'ti-file'
+};
+
+// File names and media tags come from the scanned files, so they are escaped.
+function esc(v){
+
+  return String(v ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
+
+// Analysis entries are matched to groups by path, as groups with a unique size have no hash.
+function indexAnalysis(s){
+
+  if(!Array.isArray(s.analysis)) return;
+
+  s.analysisByPath = new Map();
+
+  s.analysis.forEach(a =>
+    (a.files || []).forEach(f => s.analysisByPath.set(f.path, a))
+  );
+}
+
+function analysisFor(entry){
+
+  const map = snaps[activeSnap]?.analysisByPath;
+
+  return map && entry?.files?.length
+    ? map.get(entry.files[0])
+    : null;
+}
+
+const KINDS = ['video','audio','image'];
+
+// Media FFmpeg could not open has no kind, so it falls back to the MIME type.
+function kindOf(a){
+
+  const k = a?.content?.media?.kind;
+  const mimeKind = String(a?.content?.type?.mime ?? '').split('/')[0];
+
+  if(KINDS.includes(k)) return k;
+
+  return a?.content?.media?.error && KINDS.includes(mimeKind) ? mimeKind : 'other';
+}
+
+function flagsOf(a){
+
+  const m = a?.content?.media;
+
+  return {
+    mismatch: (a?.files || []).some(f => f.extensionMatchesContent === false),
+    unreadable: !!m?.error,
+    damaged: m?.integrity?.complete === false,
+    gps: !!m?.image?.gpsPresent,
+    // Frames lost in damaged files also make the frame rate irregular.
+    vfr: m?.integrity?.complete !== false
+      && (m?.packets?.streams || []).some(st => st.frameRateMode === 'variable'),
+    ...subtitleFlags(a)
+  };
+}
+
+function subtitleFlags(a){
+
+  const files = a?.files || [];
+  const video = kindOf(a) === 'video';
+  const embedded = (a?.content?.media?.streams || []).some(st => st.type === 'subtitle');
+  const counts = files.map(f => f.subtitles?.length || 0);
+
+  return {
+    // Files analyzed as subtitles carry a back-reference, which is null for orphans.
+    subtitleFile: files.length > 0 && files.every(f => 'subtitleFor' in f),
+    noSubtitles: video && !embedded && counts.every(n => n === 0),
+    subtitlesDiffer: video && files.length > 1 && Math.min(...counts) !== Math.max(...counts),
+    subtitleIssues: files.some(f =>
+      f.subtitleFor === null || (f.subtitles || []).some(s => s.warnings?.length)
+    )
+  };
+}
+
+function matchesFilter(a, f){
+
+  if(!a) return false;
+
+  const fl = flagsOf(a);
+
+  switch(f){
+    case 'mismatch': return fl.mismatch;
+    case 'damaged': return fl.damaged || fl.unreadable;
+    case 'gps': return fl.gps;
+    case 'vfr': return fl.vfr;
+    case 'nosubs': return fl.noSubtitles;
+    case 'subissues': return fl.subtitleIssues;
+    default: return kindOf(a) === f;
+  }
+}
+
+function searchText(a){
+
+  if(a._search == null){
+
+    const c = a.content || {};
+    const m = c.media || {};
+
+    a._search = [
+      c.type?.mime,
+      c.type?.description,
+      m.kind,
+      m.container,
+      ...(m.streams || []).map(st => st.codec)
+    ].filter(Boolean).join(' ').toLowerCase();
+  }
+
+  return a._search;
+}
+
+function fmtDuration(s){
+
+  if(s == null) return null;
+
+  if(s < 60) return `${s.toFixed(1)} s`;
+
+  const h = Math.floor(s / 3600);
+  const m = Math.floor(s % 3600 / 60);
+  const sec = String(Math.floor(s % 60)).padStart(2,'0');
+
+  return h
+    ? `${h}:${String(m).padStart(2,'0')}:${sec}`
+    : `${m}:${sec}`;
+}
+
+function fmtBitrate(b){
+
+  if(b == null) return null;
+
+  return b >= 1e6
+    ? `${(b / 1e6).toFixed(1)} Mb/s`
+    : `${Math.round(b / 1e3)} kb/s`;
+}
+
+function fmtDate(iso){
+
+  return iso ? iso.replace('T',' ').replace('Z',' UTC') : null;
+}
+
+function yesNo(b){
+
+  return b == null ? null : (b ? 'Yes' : 'No');
+}
+
+function chip(text, cls = '', icon = '', title = ''){
+
+  return `<span class="dh-chip ${cls}"${title ? ` title="${esc(title)}"` : ''}>${icon ? `<i class="ti ${icon}"></i>` : ''}${esc(text)}</span>`;
+}
+
+function mediaSummary(a){
+
+  const c = a.content || {};
+  const m = c.media || {};
+  const streams = m.streams || [];
+
+  const v = streams.find(st => st.type === 'video' && !st.attachedPicture);
+  const au = streams.find(st => st.type === 'audio');
+
+  const parts = [];
+
+  switch(kindOf(a)){
+    case 'video':
+      if(v) parts.push(`${v.codec} ${v.width}×${v.height}`);
+      if(au) parts.push(au.codec);
+      parts.push(fmtDuration(m.duration));
+      break;
+    case 'audio':
+      if(au) parts.push(`${au.codec} ${au.sampleRate / 1000} kHz ${au.channelLayout || ''}`.trim());
+      parts.push(fmtDuration(m.duration));
+      break;
+    case 'image':
+      if(v) parts.push(`${v.codec} ${v.width}×${v.height}`);
+      break;
+    default:
+      parts.push(c.type?.mime);
+  }
+
+  return parts.filter(Boolean).join(' · ');
+}
+
+function groupSummary(a){
+
+  if(!a) return '';
+
+  const k = kindOf(a);
+  const fl = flagsOf(a);
+
+  return `
+    <div class="dh-summary">
+      ${chip(k, '', KIND_ICONS[k])}
+      <span>${esc(mediaSummary(a))}</span>
+      ${fl.mismatch ? chip('Extension mismatch', 'warn', 'ti-alert-triangle') : ''}
+      ${fl.damaged ? chip('Damaged', 'bad', 'ti-alert-octagon', (a.content.media.integrity.issues || []).join('\n')) : ''}
+      ${fl.unreadable ? chip('Unreadable', 'bad', 'ti-alert-octagon') : ''}
+      ${fl.gps ? chip('GPS location', 'warn', 'ti-map-pin') : ''}
+      ${fl.vfr ? chip('VFR', '', 'ti-wave-sine', 'Variable frame rate') : ''}
+      ${fl.subtitlesDiffer ? chip('Subtitles differ between copies', 'warn', 'ti-messages', 'Deleting a copy can leave its subtitles without a video') : ''}
+    </div>
+  `;
+}
+
+// rows: [label, value, monospace?]; empty values are skipped.
+function kv(rows){
+
+  const items = rows.filter(([,v]) => v != null && v !== '');
+
+  if(!items.length) return '';
+
+  return `<dl class="dh-kv">${items.map(([k,v,mono]) =>
+    `<dt>${esc(k)}</dt><dd${mono ? ' class="dh-mono"' : ''}>${esc(v)}</dd>`
+  ).join('')}</dl>`;
+}
+
+function section(title, body){
+
+  return body
+    ? `<div class="dh-sec"><h4>${esc(title)}</h4>${body}</div>`
+    : '';
+}
+
+function streamLine(st){
+
+  const p = [st.codec, st.profile];
+
+  if(st.type === 'video'){
+    p.push(
+      `${st.width}×${st.height}`,
+      st.frameRate && `${st.frameRate} fps`,
+      st.pixelFormat,
+      st.bitDepth && `${st.bitDepth}-bit`,
+      st.hdr && 'HDR',
+      st.rotation && `rotated ${st.rotation}°`,
+      st.attachedPicture && 'cover art'
+    );
+  }
+
+  if(st.type === 'audio'){
+    p.push(
+      st.sampleRate && `${st.sampleRate} Hz`,
+      st.channelLayout,
+      st.lossless === true ? 'lossless' : st.lossless === false ? 'lossy' : null
+    );
+  }
+
+  p.push(
+    fmtBitrate(st.bitrate),
+    st.language && st.language !== 'und' && st.language,
+    st.forced && 'forced',
+    st.hearingImpaired && 'SDH'
+  );
+
+  return p.filter(Boolean).join(' · ');
+}
+
+const LEVEL_LABELS = {
+  basic:'Basic (headers)',
+  packets:'Packets (no decoding)',
+  deep:'Deep (full decode)'
+};
+
+function issuesList(issues){
+
+  if(!issues?.length) return '';
+
+  return `<ul class="dh-issues">${issues.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`;
+}
+
+function packetLine(st){
+
+  const p = [`${st.packets} packets`, fmtBitrate(st.bitrate)];
+
+  if(st.bitrateMode){
+    p.push(`${st.bitrateMode} bitrate${st.peakBitrate ? ` (peak ${fmtBitrate(st.peakBitrate)})` : ''}`);
+  }
+
+  if(st.type === 'video'){
+    if(st.averageFrameRate){
+      p.push(`${st.averageFrameRate} fps ${st.frameRateMode === 'variable' ? 'VFR' : 'CFR'}`);
+    }
+    p.push(st.keyframeInterval != null
+      ? `keyframe every ${st.keyframeInterval} s (max ${st.maxKeyframeInterval} s)`
+      : `${st.keyframes} keyframe${st.keyframes === 1 ? '' : 's'}`);
+  }
+
+  if(st.corruptPackets) p.push(`${st.corruptPackets} corrupt`);
+  if(st.gaps) p.push(`${st.gaps} gaps (${st.gapDuration} s)`);
+  if(st.timestampErrors) p.push(`${st.timestampErrors} timestamp errors`);
+
+  return p.filter(Boolean).join(' · ');
+}
+
+function renderDetails(a){
+
+  const c = a.content || {};
+  const t = c.type || {};
+  const g = c.generic || {};
+  const m = c.media;
+
+  let html = section('Content', kv([
+    ['MIME', t.mime],
+    ['Description', t.description],
+    ['Encoding', t.encoding],
+    ['Extensions', (t.extensions || []).join(', ')],
+    ['Entropy', g.entropy != null
+      ? `${g.entropy} bits/byte${g.entropySampled ? ' (sampled)' : ''}`
+      : null]
+  ]));
+
+  if(m?.error){
+    html += section('Media', kv([['Error', m.error]]));
+  }
+  else if(m){
+
+    html += section('Media', kv([
+      ['Container', m.containerLongName || m.container],
+      ['Duration', fmtDuration(m.duration)],
+      ['Bitrate', fmtBitrate(m.bitrate)],
+      ['Chapters', m.chapters || null],
+      ['Cover art', m.hasCoverArt ? 'Yes' : null],
+      ...Object.entries(m.tags || {})
+    ]));
+
+    html += section('Streams', kv(
+      (m.streams || []).map(st => [`#${st.index} ${st.type}`, streamLine(st)])
+    ));
+
+    if(m.image){
+      html += section('Image', kv([
+        ['Size', `${m.image.width}×${m.image.height} (${m.image.megapixels} MP)`],
+        ['Frames', m.image.frameCount],
+        ['Animated', yesNo(m.image.animated)],
+        ['GPS', yesNo(m.image.gpsPresent)],
+        ['dHash', m.image.dhash, true],
+        ...Object.entries(m.image.metadata || {})
+      ]));
+    }
+
+    if(m.integrity){
+      const i = m.integrity;
+      html += section('Integrity', kv([
+        ['Status', i.complete ? 'No problems found' : 'Problems found'],
+        ['Checked at', LEVEL_LABELS[i.level] || i.level]
+      ]) + issuesList(i.issues));
+    }
+
+    if(m.packets){
+      const p = m.packets;
+      html += section('Packets', kv([
+        ['Video frames', p.videoFrames != null && p.expectedVideoFrames != null
+          ? `${p.videoFrames} of ${p.expectedVideoFramesEstimated ? '≈' : ''}${p.expectedVideoFrames}`
+          : p.videoFrames],
+        ['Content end', fmtDuration(p.contentEnd)],
+        ['A/V offset', p.audioVideoOffset != null ? `${Math.round(p.audioVideoOffset * 1000)} ms` : null],
+        ['Demux error', p.demuxError],
+        ...(p.streams || []).map(st => [`#${st.index} ${st.type}`, packetLine(st)])
+      ]));
+    }
+
+    if(m.frameHashes?.length){
+      html += section('Perceptual hashes', kv(
+        m.frameHashes.map(h => [`dHash @ ${fmtDuration(h.time)}`, h.dhash, true])
+      ));
+    }
+
+    if(m.decode){
+      const d = m.decode;
+      html += section('Decode', kv([
+        ['Decode errors', d.decodeErrors],
+        ['Corrupt frames', d.corruptFrames],
+        ['Video frames', d.videoFrames],
+        ['Audio frames', d.audioFrames],
+        ['Decoded duration', fmtDuration(d.decodedDuration)],
+        ['Missing decoders', (d.missingDecoders || []).join(', ')],
+        ['Black frames', d.video
+          ? `${d.video.blackFrames} (${(d.video.blackFrameRatio * 100).toFixed(1)}%)`
+          : null]
+      ]));
+
+      if(d.audio){
+        html += section('Audio levels', kv([
+          ['Peak', d.audio.peakDb != null ? `${d.audio.peakDb} dBFS` : null],
+          ['RMS', d.audio.rmsDb != null ? `${d.audio.rmsDb} dBFS` : null],
+          ['Clipped samples', d.audio.clippedSamples],
+          ['Silent', d.audio.silent ? 'Yes' : null],
+          ['Leading silence', fmtDuration(d.audio.leadingSilence)],
+          ['Trailing silence', fmtDuration(d.audio.trailingSilence)]
+        ]));
+      }
+    }
+  }
+
+  return `<div class="dh-details">${html}</div>`;
+}
+
+function fileMeta(st){
+
+  if(!st) return '';
+
+  const chips = [];
+
+  if(st.extensionMatchesContent === false) chips.push(chip('Extension mismatch', 'warn', 'ti-alert-triangle'));
+  if(st.error) chips.push(chip(st.error, 'bad'));
+  if(st.mode) chips.push(chip(st.mode, '', 'ti-lock'));
+  if(st.owner != null) chips.push(chip(`${st.owner}:${st.group}`, '', 'ti-user'));
+  if(st.modified) chips.push(chip(fmtDate(st.modified), '', 'ti-clock'));
+  if(st.hardLinks > 1) chips.push(chip(`${st.hardLinks} hard links`, '', 'ti-link'));
+  if(st.symlink) chips.push(chip('symlink', '', 'ti-link'));
+  if(st.sparse) chips.push(chip('sparse'));
+  if(st.xattrs?.length) chips.push(chip(`${st.xattrs.length} xattrs`, '', 'ti-tags'));
+
+  return `<div class="dh-file-meta">${chips.join('')}</div>` + subtitleMeta(st);
+}
+
+function baseName(path){
+
+  return String(path).replace(/\\/g,'/').split('/').pop();
+}
+
+function subtitleLabel(s){
+
+  return [
+    s.language ? s.language.toUpperCase() : 'Unknown language',
+    s.forced && 'forced',
+    s.sdh && 'SDH',
+    s.format !== 'subrip' && s.format
+  ].filter(Boolean).join(' ');
+}
+
+function subtitleMeta(st){
+
+  const chips = [];
+  let warnings = [];
+
+  if(Array.isArray(st.subtitles)){
+
+    if(!st.subtitles.length){
+      chips.push(chip('No external subtitles', '', 'ti-message-off'));
+    }
+
+    st.subtitles.forEach(s => {
+      const w = s.warnings || [];
+      const details = [s.path, s.encoding && `Encoding: ${s.encoding}`, s.cues != null && `${s.cues} lines`, ...w];
+      chips.push(chip(subtitleLabel(s), w.length ? 'warn' : 'good', 'ti-message', details.filter(Boolean).join('\n')));
+      warnings = warnings.concat(w.map(x => `${baseName(s.path)}: ${x}`));
+    });
+  }
+
+  if('subtitleFor' in st){
+    chips.push(st.subtitleFor
+      ? chip(`Subtitle of ${baseName(st.subtitleFor)}`, '', 'ti-link', st.subtitleFor)
+      : chip('No matching video', 'warn', 'ti-unlink'));
+  }
+
+  if(!chips.length) return '';
+
+  return `<div class="dh-file-meta">${chips.join('')}</div>`
+    + (warnings.length
+      ? `<ul class="dh-issues warn">${warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>`
+      : '');
+}
+
 function renderGroups(data){
 
   const wrap = document.getElementById('groupsWrap');
@@ -700,7 +1397,7 @@ function renderGroups(data){
         <i class="ti ti-search-off" style="font-size:52px;opacity:.7;"></i>
         <h3>No matches found</h3>
         <div style="color:var(--muted)">
-          Try another filename, path, extension, or hash.
+          Try another search term or filter.
         </div>
       </div>
     `;
@@ -735,6 +1432,8 @@ function renderGroups(data){
     const hash = entry.hash;
     const size = entry.size;
     const files = entry.files || [];
+    const a = analysisFor(entry);
+    const icon = a ? KIND_ICONS[kindOf(a)] : 'ti-file';
 
     const rows = files.map(f=>{
 
@@ -744,20 +1443,24 @@ function renderGroups(data){
       const name = parts.pop();
       const dir = parts.join('/');
 
+      const stats = a?.files?.find(x => x.path === f);
+
       return `
         <div class="dh-file">
 
           <div class="dh-file-icon">
-            <i class="ti ti-file"></i>
+            <i class="ti ${icon}"></i>
           </div>
 
           <div class="dh-file-info">
-            <div class="dh-file-name">${name}</div>
-            <div class="dh-file-path">${dir || '/'}</div>
+            <div class="dh-file-name">${esc(name)}</div>
+            <div class="dh-file-path">${esc(dir || '/')}</div>
+            ${fileMeta(stats)}
           </div>
 
           <button class="dh-copy"
-            onclick="copyPath('${f.replace(/'/g,"\\'")}',this)">
+            data-path="${esc(f)}"
+            onclick="copyPath(this.dataset.path,this)">
             <i class="ti ti-copy"></i>
           </button>
 
@@ -781,9 +1484,15 @@ function renderGroups(data){
               ${formatSize(size)}
             </span>
 
-            <span class="dh-hash">
-              ${hash != null ? hash : 'unique size — not hashed'}
-            </span>
+            <div class="dh-gh-main">
+
+              <span class="dh-hash">
+                ${hash != null ? hash : 'unique size — not hashed'}
+              </span>
+
+              ${groupSummary(a)}
+
+            </div>
 
           </div>
 
@@ -793,6 +1502,7 @@ function renderGroups(data){
         </div>
 
         <div class="dh-gfiles" id="gf-${i}">
+          ${a ? renderDetails(a) : ''}
           ${rows}
         </div>
 
@@ -905,20 +1615,45 @@ function handleSearch(v){
 
 function doFilter(q){
 
-  const query = q.trim().toLowerCase();
+  searchQuery = q.trim().toLowerCase();
 
-  if(!query){
+  applyFilters();
+}
 
-    filteredGroups = [...curGroups];
+function toggleSubtitleFiles(){
 
-    currentPage = 1;
+  hideSubtitleFiles = !hideSubtitleFiles;
 
-    renderGroups(filteredGroups);
+  document.getElementById('hideSubsBtn').classList.toggle('active', hideSubtitleFiles);
 
-    return;
-  }
+  applyFilters();
+}
+
+function setFilter(f){
+
+  activeFilter = f;
+
+  document.getElementById('filterSel').value = f;
+
+  applyFilters();
+}
+
+function applyFilters(){
+
+  const query = searchQuery;
 
   filteredGroups = curGroups.filter(entry => {
+
+    const a = analysisFor(entry);
+
+    if(activeFilter !== 'all' && !matchesFilter(a, activeFilter))
+      return false;
+
+    if(hideSubtitleFiles && a && flagsOf(a).subtitleFile)
+      return false;
+
+    if(!query)
+      return true;
 
     const hash =
       String(entry?.hash ?? '')
@@ -932,20 +1667,12 @@ function doFilter(q){
     if(hash.includes(query))
       return true;
 
-    return files.some(file => {
+    if(a && searchText(a).includes(query))
+      return true;
 
-      const normalized =
-        String(file).toLowerCase();
-
-      const filename =
-        normalized.split('/').pop();
-
-      return (
-        normalized.includes(query) ||
-        filename.includes(query)
-      );
-
-    });
+    return files.some(file =>
+      String(file).toLowerCase().includes(query)
+    );
 
   });
 

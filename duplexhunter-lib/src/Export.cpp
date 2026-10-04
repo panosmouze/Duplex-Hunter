@@ -24,6 +24,7 @@ void Export::exportConfig() {
     j_cfg["paths"] = cfg.paths;
     j_cfg["depth"] = cfg.depth;
     j_cfg["fashHash"] = cfg.fastHash;
+    j_cfg["analysisLevel"] = analysisLevelName(cfg.analysisLevel);
     saveJson("config.json", j_cfg);
 }
 
@@ -42,6 +43,7 @@ void Export::saveJson(const std::string& fileName, const json& j) {
     if (!out) {
         throw std::runtime_error("Failed to open file: " + path.string());
     }
-    out << j.dump(4);
+    // File names and media tags are not guaranteed to be valid UTF-8.
+    out << j.dump(4, ' ', false, json::error_handler_t::replace);
     out.close();
 }

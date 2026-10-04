@@ -25,5 +25,17 @@ if(NOT XXHASH_LIB)
     message(FATAL_ERROR "xxHash library not found.")
 endif()
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBMAGIC REQUIRED IMPORTED_TARGET libmagic)
+
+option(DUPLEXHUNTER_WITH_FFMPEG "Enable media analysis using FFmpeg" ON)
+if(DUPLEXHUNTER_WITH_FFMPEG)
+    pkg_check_modules(FFMPEG IMPORTED_TARGET libavformat libavcodec libavutil libswscale libswresample)
+    if(NOT FFMPEG_FOUND)
+        message(WARNING "FFmpeg libraries not found. Media analysis disabled.")
+        set(DUPLEXHUNTER_WITH_FFMPEG OFF)
+    endif()
+endif()
+
 add_subdirectory(duplexhunter-lib)
 add_subdirectory(duplexhunter-cli)

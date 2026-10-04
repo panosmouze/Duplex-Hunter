@@ -8,6 +8,7 @@ enum class DUPLEXHUNTER_API DuplexHunterStatus {
     Scanning,
     Hashing,
     Matching,
+    Analyzing,
     Done
 };
 

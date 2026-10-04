@@ -41,6 +41,9 @@ However, if absolute certainty is required, results should be verified manually.
 ### Prerequisites
 
 - [xxHash](https://github.com/Cyan4973/xxHash) library
+- [libmagic](https://www.darwinsys.com/file/) (file type detection)
+- [FFmpeg](https://ffmpeg.org/) libraries (`libavformat`, `libavcodec`, `libavutil`, `libswscale`, `libswresample`), optional:
+  media analysis is disabled if they are missing or with `-DDUPLEXHUNTER_WITH_FFMPEG=OFF`
 
 ### Instructions
 
@@ -63,8 +66,59 @@ duplexhunter [options]
 --depth <n>             Max recursion depth (default UINT16_MAX)
 --export-path <path>    Directory to save results (default .)
 --enable-fast-hash      Use faster (partial) hashing (default false)
+--analyze[=<level>]     Gather per-file stats based on the file type: basic (default), packets or deep
 --help                  Show help
 ```
+
+## File Analysis
+
+With `--analyze`, an `analysis.json` file is exported alongside the results.
+Content is analyzed once per duplicate group, while filesystem stats are collected for every file.
+Each level includes everything from the levels above it.
+
+### `--analyze` or `--analyze=basic`
+
+Reads headers and metadata only, taking milliseconds per file.
+
+- **All files**: MIME type and description (libmagic), extension/content mismatch, byte entropy
+  (sampled; ~8 bits/byte indicates compressed or encrypted data), permissions, owner, timestamps,
+  hard links, sparseness, extended attributes.
+- **Video / audio / images** (FFmpeg): container, duration, bitrate, tags, chapters and per-stream
+  codec, profile, resolution, frame rate, pixel format, bit depth, HDR, rotation, sample rate,
+  channels, lossless/lossy, forced and hearing impaired subtitle streams. Images also report
+  EXIF/embedded metadata, GPS presence and a perceptual hash (dHash).
+- **External subtitles**: subtitle files stored with each video copy (`.srt`, `.ass`, `.ssa`, `.vtt`,
+  `.sub`/`.idx`, `.sup`), with the language and forced/SDH flags read from their names. Subtitle files
+  also point back to their video, so it is visible which copy of a duplicate video has subtitles.
+  Recognized layouts:
+  - `Movie.srt`, `Movie.en.srt`, `Movie.el.forced.srt`, `Movie.en.sdh.srt` next to `Movie.mkv`
+  - `Subs/2_English.srt` next to the only video of a folder
+  - `Subs/Episode/2_English.srt` for `Episode.mkv`
+
+### `--analyze=packets`
+
+Reads every packet of media files without decoding them, which costs about as much as hashing them.
+Entropy is calculated over the whole file.
+
+- integrity check: truncation and silently skipped damage (frames and duration compared with the
+  container), corrupt packets, timestamp gaps and non-monotonic timestamps
+- per stream: measured and peak bitrate, constant/variable bitrate, keyframe interval,
+  average frame rate, constant/variable frame rate, audio/video start offset
+- frame count of animated images
+- external subtitles: text encoding, number of lines and timing, with a warning when a file is not
+  UTF-8 or does not fit the length of its video
+- perceptual hashes at 10/30/50/70/90% of a video, decoding only from the nearest keyframe
+
+### `--analyze=deep`
+
+Decodes media files completely, which is considerably slower.
+
+- decode errors and corrupt frames, which catch damage inside packets
+- black frame ratio
+- audio peak and RMS level, clipped samples, leading and trailing silence
+
+Perceptual hashes of similar images or videos differ in only a few bits, so they can be used to
+find near-duplicates such as resized or re-encoded copies.
 
 ## Duplex-Hunter UI
 

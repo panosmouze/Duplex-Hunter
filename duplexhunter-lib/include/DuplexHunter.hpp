@@ -21,10 +21,12 @@ public:
     DUPLEXHUNTER_API void run();
     DUPLEXHUNTER_API void scan();
     DUPLEXHUNTER_API void match();
+    DUPLEXHUNTER_API void analyze();
     DUPLEXHUNTER_API void exportResults();
 
     DUPLEXHUNTER_API std::vector<FileMatchGroup> getDuplicates();
     DUPLEXHUNTER_API std::vector<FileMatchGroup> getUnique();
+    DUPLEXHUNTER_API nlohmann::json getAnalysis();
 
     DUPLEXHUNTER_API void setProgressCallback(std::function<void(DuplexHunterProgressInfo)> cb);
 
@@ -33,6 +35,7 @@ private:
 
     FileCollector collector;
     std::unique_ptr<FileMatch> matcher;
+    nlohmann::json analysis;
 
     std::function<void(DuplexHunterProgressInfo)> progressCallback;
 };
