@@ -166,3 +166,8 @@ of all results, which open the result at that group when clicked.
 
 Ports can be changed with `UI_PORT` and `MONGO_EXPRESS_PORT`. There is no authentication,
 so only run it on a trusted network.
+
+## Development
+
+Parts of this project, including the web UI and its backend, were developed with the help of
+AI coding tools.
