@@ -18,6 +18,10 @@ Export::~Export() {
 
 }
 
+const fs::path& Export::getPath() const {
+    return path;
+}
+
 void Export::exportConfig() {
     json j_cfg;
     j_cfg["timestamp"] = timestamp;

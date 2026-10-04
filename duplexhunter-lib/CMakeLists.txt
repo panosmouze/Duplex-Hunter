@@ -5,6 +5,10 @@ if(NOT DUPLEXHUNTER_WITH_FFMPEG)
     list(REMOVE_ITEM LIB_SOURCES "${PROJECT_SOURCE_DIR}/duplexhunter-lib/src/MediaAnalyzer.cpp")
 endif()
 
+if(NOT DUPLEXHUNTER_WITH_UPLOAD)
+    list(REMOVE_ITEM LIB_SOURCES "${PROJECT_SOURCE_DIR}/duplexhunter-lib/src/Upload.cpp")
+endif()
+
 add_library(duplexhunter SHARED ${LIB_SOURCES})
 
 set_target_properties(duplexhunter PROPERTIES
@@ -32,4 +36,9 @@ target_link_libraries(duplexhunter PRIVATE PkgConfig::LIBMAGIC)
 if(DUPLEXHUNTER_WITH_FFMPEG)
     target_compile_definitions(duplexhunter PRIVATE DUPLEXHUNTER_HAS_FFMPEG)
     target_link_libraries(duplexhunter PRIVATE PkgConfig::FFMPEG)
+endif()
+
+if(DUPLEXHUNTER_WITH_UPLOAD)
+    target_compile_definitions(duplexhunter PRIVATE DUPLEXHUNTER_HAS_UPLOAD)
+    target_link_libraries(duplexhunter PRIVATE PkgConfig::CURL PkgConfig::LIBZIP)
 endif()

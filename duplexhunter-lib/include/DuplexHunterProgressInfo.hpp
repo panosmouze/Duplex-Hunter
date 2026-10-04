@@ -9,6 +9,8 @@ enum class DUPLEXHUNTER_API DuplexHunterStatus {
     Hashing,
     Matching,
     Analyzing,
+    Zipping,
+    Uploading,
     Done
 };
 

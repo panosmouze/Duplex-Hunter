@@ -21,6 +21,7 @@ public:
     Export(const DuplexHunterConfig& cfg);
     ~Export();
     void saveJson(const std::string& fileName, const json& j);
+    const fs::path& getPath() const;
 
 private:
     void exportConfig();

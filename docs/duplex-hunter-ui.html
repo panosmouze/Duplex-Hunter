@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Duplex Hunter</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%236ea8ff'/%3E%3Crect x='8' y='8' width='16' height='16' rx='3' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 
@@ -27,6 +28,7 @@
 
 body{
   margin:0;
+  min-height:100vh;
   font-family:Inter,system-ui,sans-serif;
   color:var(--text);
   background:
@@ -538,6 +540,301 @@ body{
   gap:6px;
 }
 
+.dh-hero-actions,
+.dh-actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:12px;
+}
+
+.dh-hero-actions{
+  margin-top:32px;
+}
+
+.dh-hero-actions .dh-dropzone{
+  margin-top:0;
+}
+
+.dh-actions .dh-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+}
+
+.dh-actions input{
+  display:none;
+}
+
+.dh-status{
+  margin-top:18px;
+  min-height:1.4em;
+  color:var(--muted);
+  font-size:14px;
+  white-space:pre-line;
+}
+
+.dh-status.bad{
+  color:var(--bad);
+}
+
+.dh-results{
+  width:100%;
+  max-width:760px;
+  margin-top:28px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  text-align:left;
+}
+
+.dh-result{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  width:100%;
+  padding:18px 22px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  backdrop-filter:blur(18px);
+  color:var(--text);
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.dh-result:hover{
+  transform:translateY(-2px);
+  border-color:rgba(110,168,255,.4);
+}
+
+.dh-result-info{
+  flex:1;
+  min-width:0;
+}
+
+.dh-result-name{
+  font-weight:800;
+  font-family:monospace;
+  font-size:16px;
+}
+
+.dh-result-paths{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.dh-label{
+  --c:#6ea8ff;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+  color:var(--c);
+  background:color-mix(in srgb,var(--c) 16%,transparent);
+  border:1px solid color-mix(in srgb,var(--c) 35%,transparent);
+}
+
+.dh-label::before{
+  content:'';
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--c);
+}
+
+button.dh-label{
+  cursor:pointer;
+  font-family:inherit;
+  opacity:.55;
+  transition:.15s ease;
+}
+
+button.dh-label:hover{
+  opacity:.85;
+}
+
+button.dh-label.on{
+  opacity:1;
+  background:color-mix(in srgb,var(--c) 30%,transparent);
+}
+
+.dh-labels{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px;
+}
+
+.dh-labels:empty{
+  display:none;
+}
+
+.dh-notes{
+  padding:18px 22px;
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  cursor:default;
+}
+
+.dh-notes h4{
+  margin:0;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--accent);
+}
+
+.dh-notes textarea,
+.dh-modal input[type=text]{
+  width:100%;
+  border-radius:14px;
+  padding:12px 14px;
+  color:var(--text);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  font:inherit;
+  font-size:14px;
+  outline:none;
+}
+
+.dh-notes textarea{
+  min-height:76px;
+  resize:vertical;
+}
+
+.dh-notes textarea:focus,
+.dh-modal input[type=text]:focus{
+  border-color:rgba(110,168,255,.5);
+}
+
+.dh-notes-actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:12px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.dh-link{
+  border:none;
+  background:none;
+  padding:0;
+  color:var(--accent);
+  cursor:pointer;
+  font:inherit;
+}
+
+.dh-comment{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  line-height:1.55;
+  font-size:14px;
+}
+
+.dh-group.focus{
+  border-color:var(--accent);
+}
+
+.dh-note-card{
+  padding:18px 22px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.dh-note-card:hover{
+  background:rgba(255,255,255,.03);
+}
+
+.dh-note-head{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.dh-modal{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(5,8,18,.7);
+  backdrop-filter:blur(6px);
+}
+
+.dh-modal-box{
+  width:100%;
+  max-width:520px;
+  max-height:90vh;
+  overflow:auto;
+  padding:24px;
+  border-radius:24px;
+  background:#131c31;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+
+.dh-modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.dh-modal-head h3{
+  margin:0;
+}
+
+.dh-label-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.dh-modal input[type=color]{
+  flex-shrink:0;
+  width:40px;
+  height:40px;
+  padding:3px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.06);
+  cursor:pointer;
+}
+
+.dh-label-form{
+  margin-top:18px;
+  padding-top:18px;
+  border-top:1px solid var(--border);
+}
+
+body.dh-dragging .dh-dropzone.upload{
+  border-color:var(--accent);
+  background:rgba(110,168,255,.15);
+}
+
 @media(max-width:768px){
   .dh-hero h1{
     font-size:46px;
@@ -582,11 +879,40 @@ body{
     file types, media details, and integrity checks.
   </p>
 
-  <label class="dh-dropzone">
-    <input type="file" id="dirInput" webkitdirectory directory multiple />
-    <i class="ti ti-folder-open"></i>
-    <span>Select Export Directory</span>
-  </label>
+  <div class="dh-hero-actions">
+
+    <label class="dh-dropzone upload server-only" style="display:none;"
+      title="Export folders zipped as <timestamp>.zip">
+      <input type="file" class="zipInput" accept=".zip" multiple />
+      <i class="ti ti-upload"></i>
+      <span>Upload Results (.zip)</span>
+    </label>
+
+    <label class="dh-dropzone">
+      <input type="file" id="dirInput" webkitdirectory directory multiple />
+      <i class="ti ti-folder-open"></i>
+      <span>Select Export Directory</span>
+    </label>
+
+  </div>
+
+  <div class="dh-actions server-only" style="display:none;margin-top:16px;">
+
+    <button class="dh-btn" onclick="openNotes()">
+      <i class="ti ti-notes"></i>
+      Notes
+    </button>
+
+    <button class="dh-btn" onclick="openLabels()">
+      <i class="ti ti-tags"></i>
+      Labels
+    </button>
+
+  </div>
+
+  <div id="uploadStatus" class="dh-status"></div>
+
+  <div id="resultsList" class="dh-results server-only" style="display:none;"></div>
 
 </div>
 
@@ -599,9 +925,42 @@ body{
       Duplex Hunter
     </div>
 
-    <button class="dh-btn" onclick="resetAll()">
-      Change Folder
-    </button>
+    <div class="dh-actions">
+
+      <label class="dh-btn server-only" style="display:none;" title="Upload results (.zip)">
+        <input type="file" class="zipInput" accept=".zip" multiple />
+        <i class="ti ti-upload"></i>
+        Upload
+      </label>
+
+      <button class="dh-btn remote-only" style="display:none;"
+        onclick="downloadResult()" title="Download these results as .zip">
+        <i class="ti ti-download"></i>
+        Download
+      </button>
+
+      <button class="dh-btn remote-only" style="display:none;"
+        onclick="deleteResult()" title="Delete these results from the server">
+        <i class="ti ti-trash"></i>
+        Delete
+      </button>
+
+      <button class="dh-btn server-only" style="display:none;" onclick="openNotes()"
+        title="Commented and labeled groups of all results">
+        <i class="ti ti-notes"></i>
+        Notes
+      </button>
+
+      <button class="dh-btn server-only" style="display:none;" onclick="openLabels()">
+        <i class="ti ti-tags"></i>
+        Labels
+      </button>
+
+      <button class="dh-btn" id="backBtn" onclick="resetAll()">
+        Change Folder
+      </button>
+
+    </div>
 
   </div>
 
@@ -621,7 +980,7 @@ body{
       <input
         type="search"
         id="searchBox"
-        placeholder="Search filename, path, extension, hash, type, or codec..."
+        placeholder="Search filename, path, extension, hash, type, codec, or comment..."
         oninput="handleSearch(this.value)"
       />
     </div>
@@ -639,6 +998,9 @@ body{
       <option value="nosubs">Videos without subtitles</option>
       <option value="subissues">Subtitle problems</option>
     </select>
+
+    <select id="labelSel" class="dh-filter remote-only" onchange="setLabelFilter(this.value)"
+      style="display:none;" title="Filter by label or comment"></select>
 
     <button class="dh-btn" id="hideSubsBtn" onclick="toggleSubtitleFiles()"
       title="Hide subtitle files, which are also listed with their videos" style="display:none;">
@@ -662,6 +1024,72 @@ body{
   <div id="footerRow" class="dh-footer"></div>
 
 </div>
+
+<div id="notesPage" style="display:none;">
+
+  <div class="dh-topbar">
+
+    <div class="dh-wordmark">
+      <i class="ti ti-notes"></i>
+      Notes
+    </div>
+
+    <div class="dh-actions">
+
+      <button class="dh-btn" onclick="openLabels()">
+        <i class="ti ti-tags"></i>
+        Labels
+      </button>
+
+      <button class="dh-btn" onclick="resetAll()">
+        All Results
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="dh-toolbar">
+
+    <div class="dh-seg">
+      <button id="nCommented" class="active" onclick="setNotesMode('commented')">With comments</button>
+      <button id="nAll" onclick="setNotesMode('all')">All annotated</button>
+    </div>
+
+    <select id="notesLabelSel" class="dh-filter" onchange="setNotesLabel(this.value)"></select>
+
+  </div>
+
+  <div id="notesList" class="dh-groups"></div>
+
+</div>
+
+</div>
+
+<div id="labelsModal" class="dh-modal" style="display:none;"
+  onclick="if(event.target === this) closeLabels()">
+
+  <div class="dh-modal-box">
+
+    <div class="dh-modal-head">
+      <h3>Labels</h3>
+      <button class="dh-copy" onclick="closeLabels()" title="Close">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    <div id="labelsList"></div>
+
+    <form class="dh-label-row dh-label-form" onsubmit="createLabel(event)">
+      <input type="color" id="newLabelColor" title="Label color" />
+      <input type="text" id="newLabelName" maxlength="40" placeholder="New label, e.g. Keep" required />
+      <button class="dh-btn" type="submit">Add</button>
+    </form>
+
+    <div id="labelsError" class="dh-status bad"></div>
+
+  </div>
+
 </div>
 
 <script>
@@ -727,8 +1155,7 @@ function loadDir(files){
 
     snaps = loaded.filter(Boolean);
 
-    document.getElementById('hero').style.display='none';
-    document.getElementById('viewer').style.display='block';
+    showView('viewer');
 
     renderSnapBtns();
     selectSnap(0);
@@ -748,10 +1175,7 @@ function parseSnap(s){
       r.onload = e => {
 
         try{
-          // Hashes are 64-bit integers, which lose precision as JS numbers.
-          const text = e.target.result
-            .replace(/("hash"\s*:\s*)(\d+)/g, '$1"$2"');
-          res([k, JSON.parse(text)]);
+          res([k, parseExport(e.target.result)]);
         }catch{
           res([k, null]);
         }
@@ -774,6 +1198,12 @@ function parseSnap(s){
   });
 }
 
+function parseExport(text){
+
+  // Hashes are 64-bit integers, which lose precision as JS numbers.
+  return JSON.parse(text.replace(/("hash"\s*:\s*)(\d+)/g, '$1"$2"'));
+}
+
 function renderSnapBtns(){
 
   const el = document.getElementById('snapsRow');
@@ -790,23 +1220,58 @@ function renderSnapBtns(){
       class="dh-snap ${i===activeSnap?'active':''}"
       onclick="selectSnap(${i})"
     >
-      ${s.name}
+      ${esc(s.name)}
     </button>
   `).join('');
 }
 
-function selectSnap(i){
+async function selectSnap(i){
 
   activeSnap=i;
   activeFilter='all';
+  labelFilter='all';
+  document.getElementById('labelSel').value = 'all';
+
+  const s = snaps[i];
+
+  renderSnapBtns();
+  showRemoteActions(!!s.remote);
+
+  if(s.remote && !s.loaded){
+
+    document.getElementById('statsRow').innerHTML = '';
+    document.getElementById('pagination').innerHTML = '';
+    document.getElementById('footerRow').innerHTML = '';
+    document.getElementById('groupsWrap').innerHTML = `
+      <div class="dh-empty">
+        <i class="ti ti-loader-2" style="font-size:52px;opacity:.7;"></i>
+        <h3>Loading ${esc(s.name)}…</h3>
+      </div>
+    `;
+
+    try{
+      await loadRemoteSnap(s);
+    }catch(e){
+      document.getElementById('groupsWrap').innerHTML = `
+        <div class="dh-empty">
+          <i class="ti ti-alert-octagon" style="font-size:52px;color:var(--bad);"></i>
+          <h3>Could not load ${esc(s.name)}</h3>
+          <div style="color:var(--muted)">${esc(e.message)}</div>
+        </div>
+      `;
+      return;
+    }
+
+    // Another snapshot was selected while this one was loading.
+    if(snaps[activeSnap] !== s) return;
+  }
 
   const sel = document.getElementById('filterSel');
   sel.value = 'all';
-  sel.style.display = snaps[i].analysisByPath ? '' : 'none';
-  document.getElementById('hideSubsBtn').style.display = snaps[i].analysisByPath ? '' : 'none';
+  sel.style.display = s.analysisByPath ? '' : 'none';
+  document.getElementById('hideSubsBtn').style.display = s.analysisByPath ? '' : 'none';
 
-  renderSnapBtns();
-  renderStats(snaps[i]);
+  renderStats(s);
 
   switchTab(activeTab);
 }
@@ -1427,6 +1892,10 @@ function renderGroups(data){
     <span>${resultCount} files</span>
   `;
 
+  pageEntries = paginated;
+
+  const remote = !!snaps[activeSnap]?.remote;
+
   wrap.innerHTML = paginated.map((entry,i)=>{
 
     const hash = entry.hash;
@@ -1492,6 +1961,8 @@ function renderGroups(data){
 
               ${groupSummary(a)}
 
+              <div class="dh-labels" id="gl-${i}">${remote ? noteChips(annotationFor(entry)) : ''}</div>
+
             </div>
 
           </div>
@@ -1502,6 +1973,7 @@ function renderGroups(data){
         </div>
 
         <div class="dh-gfiles" id="gf-${i}">
+          ${remote ? notesSection(i) : ''}
           ${a ? renderDetails(a) : ''}
           ${rows}
         </div>
@@ -1652,7 +2124,15 @@ function applyFilters(){
     if(hideSubtitleFiles && a && flagsOf(a).subtitleFile)
       return false;
 
+    const ann = annotationFor(entry);
+
+    if(labelFilter !== 'all' && !matchesLabelFilter(ann, labelFilter))
+      return false;
+
     if(!query)
+      return true;
+
+    if(ann?.comment?.toLowerCase().includes(query))
       return true;
 
     const hash =
@@ -1681,6 +2161,15 @@ function applyFilters(){
   renderGroups(filteredGroups);
 }
 
+const VIEWS = { hero:'flex', viewer:'block', notesPage:'block' };
+
+function showView(view){
+
+  Object.entries(VIEWS).forEach(([id, display]) =>
+    document.getElementById(id).style.display = id === view ? display : 'none'
+  );
+}
+
 function copyPath(path, btn){
 
   navigator.clipboard.writeText(path)
@@ -1702,15 +2191,812 @@ function resetAll(){
   snaps=[];
   activeSnap=0;
 
-  document.getElementById('hero')
-    .style.display='flex';
-
-  document.getElementById('viewer')
-    .style.display='none';
+  showView('hero');
 
   document.getElementById('dirInput')
     .value='';
+
+  if(serverMode) refreshResults();
 }
+
+// ---------------------------------------------------------------------------
+// Server mode: when the page is served by the Duplex Hunter backend, results
+// are uploaded to and loaded from its API instead of a local folder.
+// ---------------------------------------------------------------------------
+
+let serverMode = false;
+let remoteResults = [];
+
+async function api(path, opts){
+
+  const r = await fetch(path, opts);
+
+  if(!r.ok){
+    let msg = `${r.status} ${r.statusText}`;
+    try{ msg = (await r.json()).detail || msg; }catch{}
+    const err = new Error(msg);
+    err.status = r.status;
+    throw err;
+  }
+
+  return r;
+}
+
+function resultUrl(name){
+
+  return `api/results/${encodeURIComponent(name)}`;
+}
+
+async function initServerMode(){
+
+  if(location.protocol === 'file:') return;
+
+  try{
+    await api('api/health');
+  }catch{
+    return;
+  }
+
+  serverMode = true;
+
+  document.querySelectorAll('.server-only')
+    .forEach(e => e.style.display = '');
+
+  document.getElementById('backBtn').textContent = 'All Results';
+
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') closeLabels();
+  });
+
+  document.querySelectorAll('.zipInput').forEach(input =>
+    input.addEventListener('change', function(){
+      uploadZips(this.files).finally(() => this.value = '');
+    })
+  );
+
+  // Zip files can also be dropped anywhere on the page.
+  document.addEventListener('dragover', e => {
+    e.preventDefault();
+    document.body.classList.add('dh-dragging');
+  });
+
+  document.addEventListener('dragleave', e => {
+    if(!e.relatedTarget) document.body.classList.remove('dh-dragging');
+  });
+
+  document.addEventListener('drop', e => {
+    e.preventDefault();
+    document.body.classList.remove('dh-dragging');
+    uploadZips(e.dataTransfer.files);
+  });
+
+  await Promise.all([refreshResults(), loadLabels()]);
+}
+
+function showRemoteActions(show){
+
+  document.querySelectorAll('.remote-only')
+    .forEach(e => e.style.display = show ? '' : 'none');
+}
+
+function setStatus(text, bad = false){
+
+  const el = document.getElementById('uploadStatus');
+
+  el.textContent = text;
+  el.classList.toggle('bad', bad);
+}
+
+async function refreshResults(){
+
+  try{
+    remoteResults = await (await api('api/results')).json();
+  }catch(e){
+    setStatus(`Could not load stored results: ${e.message}`, true);
+    return;
+  }
+
+  renderResultsList();
+}
+
+function renderResultsList(){
+
+  const el = document.getElementById('resultsList');
+
+  if(!remoteResults.length){
+    el.innerHTML = `
+      <div class="dh-empty" style="padding:2rem;">
+        <div style="color:var(--muted)">
+          No results stored yet. Zip an export folder as
+          <code>&lt;timestamp&gt;.zip</code> and upload it.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = remoteResults.map((r,i) => {
+
+    const st = r.stats || {};
+    const level = r.config?.analysisLevel;
+
+    return `
+      <button class="dh-result" onclick="openResult(${i})">
+
+        <div class="dh-file-icon">
+          <i class="ti ti-database"></i>
+        </div>
+
+        <div class="dh-result-info">
+          <div class="dh-result-name">${esc(r.name)}</div>
+          <div class="dh-result-paths">${esc((r.config?.paths || []).join(' · '))}</div>
+          <div class="dh-file-meta">
+            ${chip(`${st.duplicateGroups} duplicate groups`, '', 'ti-copy')}
+            ${chip(`${st.redundantCopies} redundant copies`, st.redundantCopies ? 'warn' : '', 'ti-files')}
+            ${chip(`${st.uniqueFiles} unique`, '', 'ti-file')}
+            ${level && level !== 'none' ? chip(`analysis: ${level}`, 'good', 'ti-microscope') : ''}
+            ${chip(formatSize(r.sizeBytes), '', 'ti-database')}
+            ${r.commentedGroups ? chip(`${r.commentedGroups} commented`, 'good', 'ti-message') : ''}
+            ${r.annotatedGroups > r.commentedGroups ? chip(`${r.annotatedGroups - r.commentedGroups} labeled`, '', 'ti-tag') : ''}
+          </div>
+        </div>
+
+        <i class="ti ti-chevron-right"></i>
+
+      </button>
+    `;
+
+  }).join('');
+}
+
+function remoteSnaps(){
+
+  // Results that were already downloaded are kept, unless they were replaced.
+  const loaded = new Map(
+    snaps.filter(s => s.remote).map(s => [s.name, s])
+  );
+
+  return remoteResults.map(r => {
+    const old = loaded.get(r.name);
+    return old && old.meta.uploadedAt === r.uploadedAt
+      ? old
+      : { name:r.name, remote:true, meta:r };
+  });
+}
+
+function openResult(i){
+
+  snaps = remoteSnaps();
+
+  setStatus('');
+
+  showView('viewer');
+
+  return selectSnap(i);
+}
+
+async function loadRemoteSnap(s){
+
+  const files = Promise.all(s.meta.files.map(async k => {
+    const r = await api(`${resultUrl(s.name)}/files/${k}`);
+    s[k] = parseExport(await r.text());
+  }));
+
+  const notes = api(`${resultUrl(s.name)}/annotations`)
+    .then(r => r.json())
+    .then(list => {
+      s.annotations = new Map(list.map(a => [annKey(a.section, a.key), a]));
+    });
+
+  await Promise.all([files, notes]);
+
+  indexAnalysis(s);
+
+  s.loaded = true;
+}
+
+async function uploadOne(file, overwrite){
+
+  const body = new FormData();
+  body.append('file', file);
+
+  const r = await api(`api/results?overwrite=${overwrite}`, { method:'POST', body });
+
+  return r.json();
+}
+
+async function uploadZips(files){
+
+  const zips = Array.from(files || [])
+    .filter(f => f.name.toLowerCase().endsWith('.zip'));
+
+  if(!zips.length) return;
+
+  const errors = [];
+  let lastName = null;
+
+  for(const f of zips){
+
+    setStatus(`Uploading ${f.name}…`);
+
+    try{
+      lastName = (await uploadOne(f, false)).name;
+    }catch(e){
+      if(e.status === 409 && confirm(`${f.name} was already uploaded. Replace it?`)){
+        try{
+          lastName = (await uploadOne(f, true)).name;
+        }catch(e2){
+          errors.push(`${f.name}: ${e2.message}`);
+        }
+      }else if(e.status !== 409){
+        errors.push(`${f.name}: ${e.message}`);
+      }
+    }
+  }
+
+  await refreshResults();
+
+  if(errors.length){
+    setStatus(errors.join('\n'), true);
+    alert(errors.join('\n'));
+  }else{
+    setStatus(lastName ? `Uploaded ${zips.length} file${zips.length === 1 ? '' : 's'}.` : '');
+  }
+
+  // Shows the uploaded result, or refreshes the switcher if already browsing.
+  const inViewer = document.getElementById('viewer').style.display !== 'none';
+  const idx = remoteResults.findIndex(r => r.name === lastName);
+
+  if(idx >= 0) openResult(idx);
+  else if(inViewer && snaps[activeSnap]?.remote){
+    const cur = snaps[activeSnap].name;
+    snaps = remoteSnaps();
+    activeSnap = Math.max(0, snaps.findIndex(s => s.name === cur));
+    renderSnapBtns();
+  }
+}
+
+function downloadResult(){
+
+  const s = snaps[activeSnap];
+
+  if(!s?.remote) return;
+
+  const a = document.createElement('a');
+  a.href = `${resultUrl(s.name)}/download`;
+  a.download = `${s.name}.zip`;
+  a.click();
+}
+
+async function deleteResult(){
+
+  const s = snaps[activeSnap];
+
+  if(!s?.remote || !confirm(`Delete ${s.name} from the server? This cannot be undone.`)) return;
+
+  try{
+    await api(resultUrl(s.name), { method:'DELETE' });
+  }catch(e){
+    alert(`Could not delete ${s.name}: ${e.message}`);
+    return;
+  }
+
+  await refreshResults();
+
+  snaps = remoteSnaps();
+
+  if(!snaps.length){
+    resetAll();
+    return;
+  }
+
+  selectSnap(Math.min(activeSnap, snaps.length - 1));
+}
+
+// ---------------------------------------------------------------------------
+// Notes: groups of a stored result can have a comment and labels. Groups are
+// identified by their hash, or their first path when they were not hashed.
+// ---------------------------------------------------------------------------
+
+let labels = [];
+let labelById = new Map();
+let labelFilter = 'all';
+let pageEntries = [];
+let notesMode = 'commented';
+let notesLabel = 'all';
+
+const LABEL_COLORS = ['#6ea8ff','#34d399','#f87171','#fbbf24','#a78bfa','#f472b6','#22d3ee','#fb923c'];
+
+function sectionOf(tab){
+
+  return tab === 'dupes' ? 'duplicates' : 'uniques';
+}
+
+function groupKey(entry){
+
+  return entry.hash != null ? String(entry.hash) : String(entry.files?.[0] ?? '');
+}
+
+function annKey(section, key){
+
+  return `${section}\n${key}`;
+}
+
+function annotationFor(entry){
+
+  return snaps[activeSnap]?.annotations?.get(annKey(sectionOf(activeTab), groupKey(entry)));
+}
+
+function matchesLabelFilter(ann, f){
+
+  switch(f){
+    case 'labeled': return !!ann?.labels?.length;
+    case 'unlabeled': return !ann?.labels?.length;
+    case 'commented': return !!ann?.comment;
+    default: return !!ann?.labels?.includes(f);
+  }
+}
+
+function labelChip(l){
+
+  return `<span class="dh-label" style="--c:${esc(l.color)}">${esc(l.name)}</span>`;
+}
+
+function noteChips(ann){
+
+  if(!ann) return '';
+
+  return (ann.labels || [])
+    .map(id => labelById.get(id))
+    .filter(Boolean)
+    .map(labelChip)
+    .join('')
+    + (ann.comment ? chip('Comment', 'good', 'ti-message', ann.comment) : '');
+}
+
+function labelPicker(ann, i){
+
+  if(!labels.length){
+    return `<span style="color:var(--muted);font-size:13px;">
+      No labels yet. <button class="dh-link" onclick="openLabels()">Create one</button>
+    </span>`;
+  }
+
+  const on = new Set(ann?.labels || []);
+
+  return labels.map(l => `
+    <button class="dh-label ${on.has(l.id) ? 'on' : ''}" style="--c:${esc(l.color)}"
+      onclick="toggleLabel(${i}, '${l.id}')"
+      title="${on.has(l.id) ? 'Remove' : 'Add'} label">
+      ${esc(l.name)}
+    </button>
+  `).join('');
+}
+
+function notesSection(i){
+
+  const ann = annotationFor(pageEntries[i]);
+
+  return `
+    <div class="dh-notes">
+      <h4>Notes</h4>
+      <div class="dh-labels" id="lp-${i}">${labelPicker(ann, i)}</div>
+      <textarea id="nc-${i}" maxlength="10000" placeholder="Add a comment…"
+        onkeydown="if((event.ctrlKey || event.metaKey) && event.key === 'Enter') saveComment(${i})"
+      >${esc(ann?.comment)}</textarea>
+      <div class="dh-notes-actions">
+        <span id="ns-${i}"></span>
+        <button class="dh-btn" onclick="saveComment(${i})" title="Ctrl+Enter">
+          Save comment
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveAnnotation(i, changes){
+
+  const entry = pageEntries[i];
+  const s = snaps[activeSnap];
+  const section = sectionOf(activeTab);
+  const key = groupKey(entry);
+  const ann = s.annotations.get(annKey(section, key));
+
+  const body = {
+    section,
+    key,
+    comment: ann?.comment || '',
+    labels: ann?.labels || [],
+    ...changes,
+    files: entry.files || [],
+    size: entry.size ?? null,
+    hash: entry.hash != null ? String(entry.hash) : null
+  };
+
+  const saved = await (await api(`${resultUrl(s.name)}/annotations`, {
+    method:'PUT',
+    headers:{ 'Content-Type':'application/json' },
+    body:JSON.stringify(body)
+  })).json();
+
+  if(saved.comment || saved.labels.length) s.annotations.set(annKey(section, key), saved);
+  else s.annotations.delete(annKey(section, key));
+
+  // Only this group is redrawn, so other expanded groups stay open.
+  document.getElementById(`gl-${i}`).innerHTML = noteChips(saved);
+  document.getElementById(`lp-${i}`).innerHTML = labelPicker(saved, i);
+
+  return saved;
+}
+
+async function toggleLabel(i, id){
+
+  const current = annotationFor(pageEntries[i])?.labels || [];
+  const next = current.includes(id)
+    ? current.filter(x => x !== id)
+    : [...current, id];
+
+  try{
+    await saveAnnotation(i, { labels:next });
+  }catch(e){
+    alert(`Could not update labels: ${e.message}`);
+  }
+}
+
+async function saveComment(i){
+
+  const status = document.getElementById(`ns-${i}`);
+  const text = document.getElementById(`nc-${i}`).value;
+
+  status.textContent = 'Saving…';
+
+  try{
+    const saved = await saveAnnotation(i, { comment:text });
+    document.getElementById(`nc-${i}`).value = saved.comment;
+    status.textContent = 'Saved';
+    setTimeout(() => { if(status.textContent === 'Saved') status.textContent = ''; }, 1500);
+  }catch(e){
+    status.textContent = `Not saved: ${e.message}`;
+  }
+}
+
+function setLabelFilter(f){
+
+  labelFilter = f;
+
+  document.getElementById('labelSel').value = f;
+
+  applyFilters();
+}
+
+function labelOptions(extra, current){
+
+  const opts = extra.concat(labels.map(l => [l.id, `Label: ${l.name}`]));
+  const value = opts.some(([v]) => v === current) ? current : 'all';
+
+  return {
+    value,
+    html: opts.map(([v, text]) => `<option value="${esc(v)}">${esc(text)}</option>`).join('')
+  };
+}
+
+function renderLabelFilters(){
+
+  const sel = document.getElementById('labelSel');
+  const view = labelOptions([
+    ['all','All groups'],
+    ['commented','With comments'],
+    ['labeled','Any label'],
+    ['unlabeled','No label']
+  ], labelFilter);
+
+  sel.innerHTML = view.html;
+  sel.value = labelFilter = view.value;
+
+  const notesSel = document.getElementById('notesLabelSel');
+  const notes = labelOptions([['all','All labels']], notesLabel);
+
+  notesSel.innerHTML = notes.html;
+  notesSel.value = notesLabel = notes.value;
+}
+
+async function loadLabels(){
+
+  try{
+    labels = await (await api('api/labels')).json();
+  }catch(e){
+    labels = [];
+  }
+
+  labelById = new Map(labels.map(l => [l.id, l]));
+
+  renderLabelFilters();
+}
+
+// Redraws whatever shows labels after they were changed.
+function refreshLabelViews(){
+
+  renderLabelFilters();
+
+  if(document.getElementById('viewer').style.display !== 'none' && snaps[activeSnap]?.loaded){
+    const open = new Set(
+      [...document.querySelectorAll('.dh-gfiles.open')].map(e => e.id)
+    );
+    renderGroups(filteredGroups);
+    open.forEach(id => {
+      document.getElementById(id)?.classList.add('open');
+      document.getElementById(id.replace('gf-','chev-'))?.classList.add('open');
+    });
+  }
+
+  if(document.getElementById('notesPage').style.display !== 'none') renderNotes();
+}
+
+function renderLabelsList(){
+
+  const el = document.getElementById('labelsList');
+
+  if(!labels.length){
+    el.innerHTML = `<div style="color:var(--muted);font-size:14px;">
+      No labels yet. Labels can be assigned to groups and used as filters.
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = labels.map(l => `
+    <div class="dh-label-row">
+      <input type="color" value="${esc(l.color)}" title="Label color"
+        onchange="updateLabel('${l.id}', { color:this.value })" />
+      <input type="text" value="${esc(l.name)}" maxlength="40" title="Rename"
+        onchange="updateLabel('${l.id}', { name:this.value }, this)" />
+      <button class="dh-copy" onclick="deleteLabel('${l.id}')" title="Delete label">
+        <i class="ti ti-trash"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+function openLabels(){
+
+  document.getElementById('labelsError').textContent = '';
+  document.getElementById('newLabelColor').value = LABEL_COLORS[labels.length % LABEL_COLORS.length];
+
+  renderLabelsList();
+
+  document.getElementById('labelsModal').style.display = 'flex';
+  document.getElementById('newLabelName').focus();
+}
+
+function closeLabels(){
+
+  document.getElementById('labelsModal').style.display = 'none';
+}
+
+async function labelRequest(path, opts){
+
+  document.getElementById('labelsError').textContent = '';
+
+  try{
+    await api(path, opts);
+    return true;
+  }catch(e){
+    document.getElementById('labelsError').textContent = e.message;
+    return false;
+  }
+}
+
+async function createLabel(e){
+
+  e.preventDefault();
+
+  const name = document.getElementById('newLabelName');
+  const color = document.getElementById('newLabelColor');
+
+  const ok = await labelRequest('api/labels', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body:JSON.stringify({ name:name.value.trim(), color:color.value })
+  });
+
+  if(!ok) return;
+
+  name.value = '';
+
+  await loadLabels();
+
+  color.value = LABEL_COLORS[labels.length % LABEL_COLORS.length];
+
+  renderLabelsList();
+  refreshLabelViews();
+}
+
+async function updateLabel(id, changes, input){
+
+  if(changes.name !== undefined && !changes.name.trim()){
+    input.value = labelById.get(id)?.name ?? '';
+    return;
+  }
+
+  const ok = await labelRequest(`api/labels/${id}`, {
+    method:'PATCH',
+    headers:{ 'Content-Type':'application/json' },
+    body:JSON.stringify(changes)
+  });
+
+  if(!ok && input) input.value = labelById.get(id)?.name ?? '';
+
+  await loadLabels();
+
+  refreshLabelViews();
+}
+
+async function deleteLabel(id){
+
+  const l = labelById.get(id);
+
+  if(!confirm(`Delete the label "${l?.name}"? It is removed from all groups.`)) return;
+
+  if(!await labelRequest(`api/labels/${id}`, { method:'DELETE' })) return;
+
+  // Loaded results drop the label the same way the server does.
+  snaps.forEach(s => s.annotations?.forEach((a, k) => {
+    a.labels = a.labels.filter(x => x !== id);
+    if(!a.labels.length && !a.comment) s.annotations.delete(k);
+  }));
+
+  await loadLabels();
+
+  renderLabelsList();
+  refreshLabelViews();
+}
+
+function openNotes(){
+
+  setStatus('');
+
+  showView('notesPage');
+
+  renderNotes();
+}
+
+function setNotesMode(mode){
+
+  notesMode = mode;
+
+  document.getElementById('nCommented').classList.toggle('active', mode === 'commented');
+  document.getElementById('nAll').classList.toggle('active', mode === 'all');
+
+  renderNotes();
+}
+
+function setNotesLabel(id){
+
+  notesLabel = id;
+
+  renderNotes();
+}
+
+let notesList = [];
+
+async function renderNotes(){
+
+  const el = document.getElementById('notesList');
+  const params = new URLSearchParams();
+
+  if(notesMode === 'commented') params.set('commented', 'true');
+  if(notesLabel !== 'all') params.set('label', notesLabel);
+
+  try{
+    notesList = await (await api(`api/annotations?${params}`)).json();
+  }catch(e){
+    el.innerHTML = `<div class="dh-empty"><h3>Could not load notes</h3>
+      <div style="color:var(--muted)">${esc(e.message)}</div></div>`;
+    return;
+  }
+
+  if(!notesList.length){
+    el.innerHTML = `
+      <div class="dh-empty">
+        <i class="ti ti-notes-off" style="font-size:52px;opacity:.7;"></i>
+        <h3>No notes found</h3>
+        <div style="color:var(--muted)">
+          Open a result and expand a group to add a comment or labels.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = notesList.map((a,i) => {
+
+    const files = a.files || [];
+    const first = files[0] ?? a.key;
+    const parts = String(first).replace(/\\/g,'/').split('/');
+    const name = parts.pop();
+
+    return `
+      <div class="dh-group">
+        <div class="dh-note-card" onclick="openAnnotation(${i})" title="Show in result">
+
+          <div class="dh-note-head">
+            ${chip(a.result, '', 'ti-database')}
+            ${chip(a.section === 'duplicates' ? 'Duplicates' : 'Uniques', '', a.section === 'duplicates' ? 'ti-copy' : 'ti-file')}
+            ${a.size != null ? `<span class="dh-size">${formatSize(a.size)}</span>` : ''}
+            <div class="dh-labels">${(a.labels || []).map(id => labelById.get(id)).filter(Boolean).map(labelChip).join('')}</div>
+          </div>
+
+          <div class="dh-file-info">
+            <div class="dh-file-name">${esc(name)}${files.length > 1 ? ` <span style="color:var(--muted);font-weight:400;">+${files.length - 1} more</span>` : ''}</div>
+            <div class="dh-file-path">${esc(parts.join('/') || '/')}</div>
+          </div>
+
+          ${a.comment ? `<div class="dh-comment">${esc(a.comment)}</div>` : ''}
+
+        </div>
+      </div>
+    `;
+
+  }).join('');
+}
+
+async function openAnnotation(i){
+
+  const a = notesList[i];
+  let idx = remoteResults.findIndex(r => r.name === a.result);
+
+  if(idx < 0){
+    await refreshResults();
+    idx = remoteResults.findIndex(r => r.name === a.result);
+  }
+
+  if(idx < 0){
+    alert(`${a.result} is no longer stored.`);
+    return;
+  }
+
+  await openResult(idx);
+
+  if(!snaps[activeSnap]?.loaded) return;
+
+  focusGroup(a.section, a.key);
+}
+
+// Shows a group with all filters cleared, expanded and scrolled into view.
+function focusGroup(section, key){
+
+  activeFilter = 'all';
+  labelFilter = 'all';
+  searchQuery = '';
+  hideSubtitleFiles = false;
+
+  document.getElementById('filterSel').value = 'all';
+  document.getElementById('labelSel').value = 'all';
+  document.getElementById('searchBox').value = '';
+  document.getElementById('hideSubsBtn').classList.remove('active');
+
+  switchTab(section === 'duplicates' ? 'dupes' : 'uniques');
+
+  const idx = filteredGroups.findIndex(e => groupKey(e) === key);
+
+  if(idx < 0){
+    alert('This group is no longer part of the result.');
+    return;
+  }
+
+  currentPage = Math.floor(idx / PAGE_SIZE) + 1;
+
+  renderGroups(filteredGroups);
+
+  const i = idx % PAGE_SIZE;
+  const group = document.getElementById(`gf-${i}`).closest('.dh-group');
+
+  toggle(i);
+
+  group.classList.add('focus');
+  group.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+initServerMode();
 
 </script>
 </body>

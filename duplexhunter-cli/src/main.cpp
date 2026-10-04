@@ -43,6 +43,12 @@ static void printProgress(const DuplexHunterProgressInfo& info)
         case DuplexHunterStatus::Analyzing:
             printBar("Analyzing", info);
             break;
+        case DuplexHunterStatus::Zipping:
+            printBar("Zipping  ", info);
+            break;
+        case DuplexHunterStatus::Uploading:
+            printBar("Uploading", info);
+            break;
         case DuplexHunterStatus::Done:
             endBar();
             std::cout << "Done" << std::endl;
@@ -77,8 +83,15 @@ int main(int argc, char* argv[])
 
         hunter.exportResults();
 
+        if (!cfg.uploadUrl.empty()) {
+            hunter.uploadResults();
+            endBar();
+            std::cout << "Uploaded results to " << cfg.uploadUrl << std::endl;
+        }
+
     } catch (const std::exception& e) {
-        std::cerr << "\nError: " << e.what() << std::endl;
+        endBar();
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 

@@ -44,6 +44,8 @@ However, if absolute certainty is required, results should be verified manually.
 - [libmagic](https://www.darwinsys.com/file/) (file type detection)
 - [FFmpeg](https://ffmpeg.org/) libraries (`libavformat`, `libavcodec`, `libavutil`, `libswscale`, `libswresample`), optional:
   media analysis is disabled if they are missing or with `-DDUPLEXHUNTER_WITH_FFMPEG=OFF`
+- [libcurl](https://curl.se/libcurl/) and [libzip](https://libzip.org/), optional:
+  `--upload-url` is disabled if they are missing or with `-DDUPLEXHUNTER_WITH_UPLOAD=OFF`
 
 ### Instructions
 
@@ -67,6 +69,7 @@ duplexhunter [options]
 --export-path <path>    Directory to save results (default .)
 --enable-fast-hash      Use faster (partial) hashing (default false)
 --analyze[=<level>]     Gather per-file stats based on the file type: basic (default), packets or deep
+--upload-url <url>      Zip the results and upload them to the self-hosted web UI
 --help                  Show help
 ```
 
@@ -127,3 +130,39 @@ Open `docs/duplex-hunter-ui.html` in your browser, load an export file and view 
 
 ![Results Selection Page](docs/duplex-hunter-ui-selection-page.png)
 ![Results Presentation Page](docs/duplex-hunter-ui-results-page.png)
+### Self-hosted Web UI (Docker)
+
+The same page can be served by a small backend that keeps results in MongoDB, so they can be
+browsed anytime without selecting a folder.
+
+```bash
+cd webui
+docker compose up -d --build
+```
+
+| Service       | URL                          | Purpose                                 |
+|---------------|------------------------------|-----------------------------------------|
+| UI            | http://localhost:8080        | Upload and browse results               |
+| Swagger       | http://localhost:8080/docs   | API endpoints (`/redoc` also available) |
+| mongo-express | http://localhost:8081        | Inspect the database                    |
+
+Results can be uploaded by the CLI right after a scan:
+
+```bash
+duplexhunter-cli --path /home/user/photos --export-path /tmp/results --upload-url http://homelab:8080
+```
+
+The export folder is zipped as `<timestamp>.zip` next to it and uploaded, and the zip is kept, so a
+failed upload can be repeated from the UI. Either the base URL of the UI or the full upload endpoint
+(`http://homelab:8080/api/results`) can be given.
+
+Exports can also be uploaded from the UI, zipped with their timestamp as the name, e.g.
+`cd /tmp/results && zip -r 2026-10-04_13-07-17.zip 2026-10-04_13-07-17`.
+The timestamp identifies the result, and uploading the same name again asks before replacing it.
+Groups of a stored result can be annotated: expand a group to add a comment or assign labels.
+Labels are managed from the **Labels** dialog and every group starts without any. The toolbar
+filters a result by label or comment, and the **Notes** page lists the commented or labeled groups
+of all results, which open the result at that group when clicked.
+
+Ports can be changed with `UI_PORT` and `MONGO_EXPRESS_PORT`. There is no authentication,
+so only run it on a trusted network.

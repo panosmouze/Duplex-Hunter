@@ -4,6 +4,9 @@
 #include "FileAnalysis.hpp"
 #include "DuplexHunterProgressInfo.hpp"
 #include "Export.hpp"
+#ifdef DUPLEXHUNTER_HAS_UPLOAD
+#include "Upload.hpp"
+#endif
 #include <stdexcept>
 
 DuplexHunter::DuplexHunter(const DuplexHunterConfig& config)
@@ -77,6 +80,30 @@ void DuplexHunter::exportResults()
     exp.saveJson("duplicates.json", matcher->getDuplicates());
     exp.saveJson("uniques.json", matcher->getUnique());
     if (!analysis.is_null()) exp.saveJson("analysis.json", analysis);
+    exportDir = exp.getPath().string();
+}
+
+void DuplexHunter::uploadResults()
+{
+#ifdef DUPLEXHUNTER_HAS_UPLOAD
+    if (exportDir.empty()) {
+        throw std::runtime_error("Results must be exported before they are uploaded");
+    }
+
+    Upload upload(exportDir, config.uploadUrl);
+    if (progressCallback) {
+        upload.setProgressCallback([this, &upload](DuplexHunterStatus status, double progress) {
+            const std::string& target = status == DuplexHunterStatus::Zipping
+                ? upload.getZipPath() : upload.getEndpoint();
+            progressCallback({ status, target, progress });
+        });
+    }
+
+    upload.createZip();
+    upload.send();
+#else
+    throw std::runtime_error("Duplex Hunter was built without upload support (libcurl and libzip)");
+#endif
 }
 
 std::vector<FileMatchGroup> DuplexHunter::getDuplicates()

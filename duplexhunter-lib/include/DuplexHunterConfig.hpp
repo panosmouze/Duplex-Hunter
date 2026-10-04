@@ -22,6 +22,7 @@ struct DUPLEXHUNTER_API DuplexHunterConfig {
     std::string exportPath;
     bool fastHash;
     AnalysisLevel analysisLevel = AnalysisLevel::None;
+    std::string uploadUrl;
 
     bool parseArgs(int argc, char* argv[]);
 };

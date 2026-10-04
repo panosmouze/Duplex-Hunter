@@ -40,6 +40,14 @@ bool DuplexHunterConfig::parseArgs(int argc, char* argv[]) {
             depth = static_cast<uint16_t>(std::stoi(argv[++i]));
         } else if (arg == "--export-path" && i + 1 < argc) {
             exportPath = argv[++i];
+        } else if (arg == "--upload-url" && i + 1 < argc) {
+#ifdef DUPLEXHUNTER_HAS_UPLOAD
+            uploadUrl = argv[++i];
+#else
+            std::cerr << "Error: --upload-url is not available, as Duplex Hunter was built without "
+                      << "libcurl and libzip." << std::endl;
+            return false;
+#endif
         } else if (arg == "--enable-fast-hash") {
             fastHash = true;
         } else if (arg == "--analyze") {
@@ -63,6 +71,8 @@ bool DuplexHunterConfig::parseArgs(int argc, char* argv[]) {
                       << "                                     (truncation, bitrate, keyframes, perceptual hashes)\n"
                       << "                            deep:    also decodes media completely\n"
                       << "                                     (decode errors, black frames, audio levels)\n"
+                      << "  --upload-url <url>        Zip the results and upload them to the Duplex Hunter\n"
+                      << "                            web UI, e.g. http://homelab:8080\n"
                       << "  --help                    Show this help\n";
             return false;
         } else {

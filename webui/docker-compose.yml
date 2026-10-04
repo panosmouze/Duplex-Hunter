@@ -1,0 +1,51 @@
+name: duplex-hunter
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    # Not published to the host; uncomment to connect with external tools.
+    # ports:
+    #   - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017
+      # No login, as this is meant for a trusted home network.
+      ME_CONFIG_BASICAUTH: "false"
+      ME_CONFIG_BASICAUTH_ENABLED: "false"
+    ports:
+      - "${MONGO_EXPRESS_PORT:-8081}:8081"
+
+  ui:
+    build:
+      context: .
+      additional_contexts:
+        docs: ../docs
+    image: duplex-hunter-ui
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      MONGO_URL: mongodb://mongo:27017
+      MONGO_DB: duplexhunter
+      MAX_EXTRACTED_MB: "2048"
+    ports:
+      - "${UI_PORT:-8080}:8080"
+
+volumes:
+  mongo-data:

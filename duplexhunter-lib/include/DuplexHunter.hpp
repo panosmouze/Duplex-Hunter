@@ -23,6 +23,7 @@ public:
     DUPLEXHUNTER_API void match();
     DUPLEXHUNTER_API void analyze();
     DUPLEXHUNTER_API void exportResults();
+    DUPLEXHUNTER_API void uploadResults();
 
     DUPLEXHUNTER_API std::vector<FileMatchGroup> getDuplicates();
     DUPLEXHUNTER_API std::vector<FileMatchGroup> getUnique();
@@ -36,6 +37,7 @@ private:
     FileCollector collector;
     std::unique_ptr<FileMatch> matcher;
     nlohmann::json analysis;
+    std::string exportDir;
 
     std::function<void(DuplexHunterProgressInfo)> progressCallback;
 };
